@@ -1,0 +1,232 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-color: #050505;
+    --text-color: #ffffff;
+    --accent-color: #c8a44e;
+    --placeholder-bg: #0a0a0a;
+}
+
+body {
+    font-family: 'Oswald', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow: hidden; /* handled by scroll-snap */
+    text-transform: uppercase;
+}
+
+/* Scroll Snap */
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+    height: 100vh;
+}
+
+section {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Letterbox Bars */
+.letterbox-top,
+.letterbox-bottom {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 5vh;
+    background: #000000;
+    z-index: 100;
+    pointer-events: none;
+}
+.letterbox-top { top: 0; }
+.letterbox-bottom { bottom: 0; }
+
+/* Vignette */
+.vignette {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 30%, rgba(5,5,5,0.9) 100%);
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Typography */
+h1, h2, h3 {
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 2px;
+}
+
+.hero-content, .cta-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 20;
+}
+
+.massive-title {
+    font-size: clamp(4rem, 12vw, 15rem);
+    text-align: center;
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+    transform: translateY(100px);
+    transition: clip-path 1.5s cubic-bezier(0.19, 1, 0.22, 1), transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.subtitle {
+    font-size: clamp(1rem, 3vw, 2.5rem);
+    letter-spacing: 5px;
+    color: var(--accent-color);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease 0.6s, transform 1s ease 0.6s;
+    margin-top: -1rem;
+    margin-bottom: 3rem;
+}
+
+/* CTA Button */
+.cta-btn {
+    display: inline-block;
+    padding: 1rem 3rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--bg-color);
+    background-color: var(--accent-color);
+    text-decoration: none;
+    border: 2px solid var(--accent-color);
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 1s ease 1s, transform 1s ease 1s, background-color 0.3s, color 0.3s;
+    cursor: pointer;
+}
+
+.cta-btn:hover {
+    background-color: transparent;
+    color: var(--accent-color);
+}
+
+/* Intersection Observer Animations */
+section.is-visible .massive-title {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: translateY(0);
+}
+
+section.is-visible .subtitle {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+section.is-visible .cta-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Scene Specifics */
+
+/* Scene 1: Hero */
+#hero {
+    background: var(--placeholder-bg);
+}
+.bg-video-placeholder {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #0a0a0a;
+    z-index: 0;
+}
+
+/* Scene 2: Featured Work */
+#work {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    background: var(--bg-color);
+}
+.work-item {
+    position: relative;
+    background: #080808;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #111;
+}
+.work-item::after {
+    content: '';
+    position: absolute;
+    top:0; left:0; width:100%; height:100%;
+    background: radial-gradient(circle, transparent 0%, rgba(0,0,0,0.8) 100%);
+    z-index: 1;
+    transition: opacity 0.5s ease;
+}
+.work-item:hover::after {
+    opacity: 0.2;
+}
+.work-title {
+    font-size: clamp(2rem, 4vw, 4rem);
+    z-index: 2;
+    color: var(--text-color);
+    opacity: 0;
+    transform: scale(1.1);
+    transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+    text-align: center;
+    padding: 1rem;
+}
+section.is-visible .work-title {
+    opacity: 1;
+    transform: scale(1);
+}
+.work-item:nth-child(1) .work-title { transition-delay: 0.2s; }
+.work-item:nth-child(2) .work-title { transition-delay: 0.4s; }
+.work-item:nth-child(3) .work-title { transition-delay: 0.6s; }
+.work-item:nth-child(4) .work-title { transition-delay: 0.8s; }
+
+/* Scene 3: Statement */
+#statement {
+    background: var(--bg-color);
+    padding: 0 10vw;
+    text-align: center;
+}
+.statement-text {
+    font-size: clamp(1.5rem, 4vw, 4rem);
+    line-height: 1.4;
+    color: var(--text-color);
+    z-index: 20;
+}
+.word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+section.is-visible .word {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Scene 4: Final CTA */
+#final-cta {
+    background: radial-gradient(circle, #0f0f0f 0%, var(--bg-color) 100%);
+}
+#final-cta .cta-btn {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    padding: 1.5rem 4rem;
+    border-width: 3px;
+    margin-top: 2rem;
+}

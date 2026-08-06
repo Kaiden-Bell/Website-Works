@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILVERS | Premium COD Edits</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="logo">SILVERS</div>
+        <a href="#contact" class="cta-link">Request an Edit</a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">SILVERS</h1>
+            <p class="hero-subtitle">PREMIUM COD EDITS</p>
+            <a href="#contact" class="cta-button">Request an Edit</a>
+        </div>
+    </section>
+
+    <section class="featured-work">
+        <div class="container">
+            <h2 class="section-title fade-in">SELECTED WORKS</h2>
+            <div class="work-grid">
+                <div class="work-item fade-in">
+                    <div class="video-placeholder"></div>
+                    <h3 class="work-title">WARZONE EXTINCTION</h3>
+                </div>
+                <div class="work-item fade-in">
+                    <div class="video-placeholder"></div>
+                    <h3 class="work-title">RANKED ASCENSION</h3>
+                </div>
+                <div class="work-item fade-in">
+                    <div class="video-placeholder"></div>
+                    <h3 class="work-title">TERMINAL VELOCITY</h3>
+                </div>
+                <div class="work-item fade-in">
+                    <div class="video-placeholder"></div>
+                    <h3 class="work-title">DARK MATTER</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="statement fade-in">
+        <div class="container">
+            <p class="statement-text">Premium gaming edits crafted for content creators who refuse to blend in. Every frame is intentional. Every cut hits different.</p>
+        </div>
+    </section>
+
+    <section class="final-cta fade-in" id="contact">
+        <div class="container">
+            <h2 class="cta-title">READY TO UPGRADE?</h2>
+            <a href="mailto:contact@silvers.com" class="cta-button large">Request an Edit</a>
+        </div>
+    </section>
+
+    <script>
+        // Intersection Observer for precise, mechanical fade-in animations on scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(element => {
+            observer.observe(element);
+        });
+    </script>
+</body>
+</html>

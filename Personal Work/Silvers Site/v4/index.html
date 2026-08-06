@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silvers - Premium Edits</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,200;9..40,400;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="site-wrapper">
+        <header class="top-bar framed-bottom">
+            <div class="metadata">SILVERS_PORTFOLIO_V4</div>
+            <div class="metadata glitch-text">SYS.ONLINE</div>
+        </header>
+
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <div class="hero-title-container">
+                    <h1 class="hero-title split-focal reveal">
+                        <span class="glitch-text block">PREMIUM</span>
+                        <span class="glitch-text block offset-indent">EDITS</span>
+                    </h1>
+                    <div class="hero-cta-wrapper reveal-delay">
+                        <a href="#contact" class="cta-link glitch-text">REQUEST AN EDIT_</a>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual reveal-delay-2">
+                <div class="video-placeholder framed">
+                    <div class="placeholder-label">AWAITING_SIGNAL_</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="work" class="work-section framed-top">
+            <header class="section-header">
+                <h2 class="metadata">FEATURED_WORK [01-04]</h2>
+            </header>
+            
+            <div class="editorial-grid">
+                <article class="work-card large framed glitch-hover-trigger">
+                    <div class="video-placeholder"></div>
+                    <div class="work-meta framed-top">
+                        <h3 class="work-title glitch-text">WARZONE EXTINCTION</h3>
+                        <span class="work-date">VOL_01</span>
+                    </div>
+                </article>
+
+                <article class="work-card small framed glitch-hover-trigger">
+                    <div class="video-placeholder"></div>
+                    <div class="work-meta framed-top">
+                        <h3 class="work-title glitch-text">RANKED ASCENSION</h3>
+                        <span class="work-date">VOL_02</span>
+                    </div>
+                </article>
+
+                <article class="work-card small framed glitch-hover-trigger">
+                    <div class="video-placeholder"></div>
+                    <div class="work-meta framed-top">
+                        <h3 class="work-title glitch-text">TERMINAL VELOCITY</h3>
+                        <span class="work-date">VOL_03</span>
+                    </div>
+                </article>
+
+                <article class="work-card large-alt framed glitch-hover-trigger">
+                    <div class="video-placeholder"></div>
+                    <div class="work-meta framed-top">
+                        <h3 class="work-title glitch-text">DARK MATTER</h3>
+                        <span class="work-date">VOL_04</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="about" class="about-section framed-top">
+            <div class="about-grid">
+                <div class="about-label">
+                    <span class="metadata">STATEMENT_</span>
+                </div>
+                <div class="about-text">
+                    <p class="reveal-scroll">Premium gaming edits crafted for content creators who refuse to blend in.</p>
+                    <p class="reveal-scroll delay">Every frame is intentional. Every cut hits different.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section framed-top">
+            <a href="mailto:contact@silvers.edit" class="final-cta glitch-text">
+                REQUEST AN EDIT
+            </a>
+            <div class="footer-metadata framed-top">
+                <span>&copy; SILVERS ALL RIGHTS RESERVED</span>
+                <span>NO SIGNAL</span>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal-scroll').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
