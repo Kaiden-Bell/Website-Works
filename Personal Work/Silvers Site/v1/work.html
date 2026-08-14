@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work | SILVERS | Premium COD Edits</title>
+    <meta name="description" content="Portfolio of SILVERS, a premium COD editing studio. Check out our montages, fragmovies, and short form edits.">
+    <meta property="og:title" content="Work | SILVERS | Premium COD Edits">
+    <meta property="og:description" content="Portfolio of SILVERS, a premium COD editing studio. Check out our montages, fragmovies, and short form edits.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Page-specific styles for Work page */
+        .work-hero {
+            padding: 12rem 5% 4rem;
+            text-align: center;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .work-hero-title {
+            font-size: clamp(3rem, 6vw, 6rem);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        .work-hero-subtitle {
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            color: #888888;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 3rem 5%;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid #222222;
+            color: #888888;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .work-page-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            padding: 0 5% 6rem;
+        }
+
+        @media (max-width: 768px) {
+            .work-page-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="logo"><a href="index.html" style="text-decoration:none;color:inherit;">SILVERS</a></div>
+        <div class="nav-links">
+            <a href="work.html" class="nav-link active">Work</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="services.html" class="nav-link">Services</a>
+        </div>
+        <div class="nav-end">
+            <a href="contact.html" class="cta-link">Request an Edit</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="work-hero fade-in" id="top">
+        <h1 class="work-hero-title">Selected Works</h1>
+        <p class="work-hero-subtitle">A collection of premium COD edits and montages</p>
+    </header>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar fade-in">
+        <button class="filter-btn active">ALL</button>
+        <button class="filter-btn">MONTAGES</button>
+        <button class="filter-btn">FRAGMOVIES</button>
+        <button class="filter-btn">SHORT FORM</button>
+        <button class="filter-btn">SNIPING</button>
+    </div>
+
+    <!-- Work Grid -->
+    <section class="work-page-content">
+        <div class="work-page-grid">
+            <!-- Video 1 -->
+            <a href="https://www.youtube.com/watch?v=kXaGLlRHh60" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/kXaGLlRHh60/maxresdefault.jpg" alt="Vanguard Precision">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Vanguard Precision</h3>
+                    <span class="work-category">Montage</span>
+                </div>
+            </a>
+            
+            <!-- Video 2 -->
+            <a href="https://www.youtube.com/watch?v=oVywlVSl4gw" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/oVywlVSl4gw/maxresdefault.jpg" alt="Warzone Extinction">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Warzone Extinction</h3>
+                    <span class="work-category">Fragmovie</span>
+                </div>
+            </a>
+
+            <!-- Video 3 -->
+            <a href="https://www.youtube.com/watch?v=DbBTOAaod0M" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/DbBTOAaod0M/maxresdefault.jpg" alt="Optic Illusion">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Optic Illusion</h3>
+                    <span class="work-category">Sniping</span>
+                </div>
+            </a>
+
+            <!-- Video 4 -->
+            <a href="https://www.youtube.com/watch?v=CtesZF5aUWY" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/CtesZF5aUWY/maxresdefault.jpg" alt="Apex Predator">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Apex Predator</h3>
+                    <span class="work-category">Short Form</span>
+                </div>
+            </a>
+
+            <!-- Video 5 -->
+            <a href="https://www.youtube.com/watch?v=taYUtWpMsYw" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/taYUtWpMsYw/maxresdefault.jpg" alt="Rebirth Resurgence">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Rebirth Resurgence</h3>
+                    <span class="work-category">Montage</span>
+                </div>
+            </a>
+
+            <!-- Video 6 -->
+            <a href="https://www.youtube.com/watch?v=G_18qt6PNuw" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/G_18qt6PNuw/maxresdefault.jpg" alt="Velocity Drop">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Velocity Drop</h3>
+                    <span class="work-category">Fragmovie</span>
+                </div>
+            </a>
+
+            <!-- Video 7 -->
+            <a href="https://www.youtube.com/watch?v=-hbScZw08a8" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/-hbScZw08a8/maxresdefault.jpg" alt="Phantom Strike">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Phantom Strike</h3>
+                    <span class="work-category">Sniping</span>
+                </div>
+            </a>
+
+            <!-- Video 8 -->
+            <a href="https://www.youtube.com/watch?v=S9TeeAs2VVw" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/S9TeeAs2VVw/maxresdefault.jpg" alt="Echo Protocol">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Echo Protocol</h3>
+                    <span class="work-category">Montage</span>
+                </div>
+            </a>
+
+            <!-- Video 9 -->
+            <a href="https://www.youtube.com/watch?v=MRClJSZSlgQ" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/MRClJSZSlgQ/maxresdefault.jpg" alt="Blackout Operations">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Blackout Operations</h3>
+                    <span class="work-category">Fragmovie</span>
+                </div>
+            </a>
+
+            <!-- Video 10 -->
+            <a href="https://www.youtube.com/watch?v=eQp58hQKo5U" target="_blank" rel="noopener noreferrer" class="work-item fade-in-stagger" style="text-decoration: none;">
+                <div class="work-thumbnail">
+                    <img src="https://img.youtube.com/vi/eQp58hQKo5U/maxresdefault.jpg" alt="Final Stand">
+                </div>
+                <div class="work-meta">
+                    <h3 class="work-title">Final Stand</h3>
+                    <span class="work-category">Short Form</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <span class="footer-logo">SILVERS</span>
+                <div class="footer-links">
+                    <a href="https://youtube.com" class="footer-link" target="_blank" rel="noopener">YouTube</a>
+                    <a href="https://twitter.com" class="footer-link" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://instagram.com" class="footer-link" target="_blank" rel="noopener">Instagram</a>
+                    <a href="https://discord.com" class="footer-link" target="_blank" rel="noopener">Discord</a>
+                </div>
+                <span class="footer-copy">© 2026 Silvers. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ─── Nav scroll effect ───
+        const nav = document.getElementById('nav');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            if (currentScroll > 80) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+            lastScroll = currentScroll;
+        }, { passive: true });
+
+        // ─── Intersection Observer for fade-in animations ───
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -60px 0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // ─── Staggered fade-in for grid items ───
+        const staggerObserver = new IntersectionObserver((entries) => {
+            const visible = entries.filter(e => e.isIntersecting);
+            visible.forEach((entry, index) => {
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                    staggerObserver.unobserve(entry.target);
+                }, index * 120);
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-stagger').forEach(el => staggerObserver.observe(el));
+    </script>
+</body>
+</html>

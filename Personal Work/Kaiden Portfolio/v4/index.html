@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaiden Bell | Cyber-Glam Portfolio</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <nav class="main-nav glass-panel">
+        <div class="nav-brand">
+            <span class="glitch-text" data-text="KB">KB</span>
+        </div>
+        <div class="nav-links">
+            <a href="#work" class="nav-link">Work</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero" id="hero">
+            <div class="hero-bg-portrait parallax-layer" data-speed="0.2">
+                <!-- Large background portrait placeholder -->
+            </div>
+            
+            <div class="hero-content">
+                <h1 class="hero-title glitch-text" data-text="KAIDEN BELL">KAIDEN BELL</h1>
+                <p class="hero-tagline"><i>A new era of design</i></p>
+                <a href="#contact" class="btn-primary glass-panel">Contact Me?</a>
+            </div>
+
+            <!-- Floating collage cards -->
+            <div class="floating-card card-1 glass-panel parallax-layer" data-speed="-0.5">
+                <div class="card-image-placeholder gradient-1"></div>
+            </div>
+            <div class="floating-card card-2 glass-panel parallax-layer" data-speed="0.8">
+                <div class="card-image-placeholder gradient-2"></div>
+            </div>
+            <div class="floating-card card-3 glass-panel parallax-layer" data-speed="-0.3">
+                <div class="card-image-placeholder gradient-3"></div>
+            </div>
+        </section>
+
+        <section class="about scroll-reveal" id="about">
+            <div class="about-container glass-panel">
+                <h2 class="section-title">THE ARCHITECT</h2>
+                <p class="about-text">
+                    I'm Kaiden Bell — a developer and designer who builds at the intersection of engineering and interface craft. I care about the details that make digital products feel intentional, from system architecture to the micro-interactions people never consciously notice but always feel.
+                </p>
+                <div class="about-accent metallic-bar"></div>
+            </div>
+        </section>
+
+        <section class="expertise" id="expertise">
+            <h2 class="section-title scroll-reveal">DISCIPLINES</h2>
+            <div class="expertise-grid">
+                <div class="expertise-card glass-panel scroll-reveal">
+                    <div class="expertise-number">01</div>
+                    <h3>Web Development</h3>
+                    <p>Architecting scalable frontends with precise state management and fluid performance.</p>
+                </div>
+                <div class="expertise-card glass-panel scroll-reveal" style="transition-delay: 0.1s;">
+                    <div class="expertise-number">02</div>
+                    <h3>Full-Stack Engineering</h3>
+                    <p>Bridging complex backend logic with seamless user-facing interfaces.</p>
+                </div>
+                <div class="expertise-card glass-panel scroll-reveal" style="transition-delay: 0.2s;">
+                    <div class="expertise-number">03</div>
+                    <h3>UI/UX Design</h3>
+                    <p>Crafting visual systems that command attention and drive conversion.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="work" id="work">
+            <h2 class="section-title scroll-reveal">SELECTED WORKS</h2>
+            <div class="work-collage">
+                <article class="work-item work-item-1 scroll-reveal parallax-layer" data-speed="0.1">
+                    <div class="work-image-container glass-panel">
+                        <div class="work-image gradient-4"></div>
+                    </div>
+                    <div class="work-meta">
+                        <span class="work-category">Product Design</span>
+                        <h3 class="work-title">Luminary Dashboard</h3>
+                        <p class="work-desc">Financial analytics visualized through glass.</p>
+                    </div>
+                </article>
+
+                <article class="work-item work-item-2 scroll-reveal parallax-layer" data-speed="0.3">
+                    <div class="work-image-container glass-panel">
+                        <div class="work-image gradient-5"></div>
+                    </div>
+                    <div class="work-meta">
+                        <span class="work-category">Web Platform</span>
+                        <h3 class="work-title">Vectra Platform</h3>
+                        <p class="work-desc">Enterprise operations reimagined.</p>
+                    </div>
+                </article>
+
+                <article class="work-item work-item-3 scroll-reveal parallax-layer" data-speed="-0.2">
+                    <div class="work-image-container glass-panel">
+                        <div class="work-image gradient-6"></div>
+                    </div>
+                    <div class="work-meta">
+                        <span class="work-category">E-Commerce</span>
+                        <h3 class="work-title">Arcline Studio</h3>
+                        <p class="work-desc">A brutalist approach to digital retail.</p>
+                    </div>
+                </article>
+
+                <article class="work-item work-item-4 scroll-reveal parallax-layer" data-speed="0.4">
+                    <div class="work-image-container glass-panel">
+                        <div class="work-image gradient-7"></div>
+                    </div>
+                    <div class="work-meta">
+                        <span class="work-category">Mobile Application</span>
+                        <h3 class="work-title">Meridian App</h3>
+                        <p class="work-desc">Fluid navigation for spatial tracking.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="contact scroll-reveal" id="contact">
+            <div class="contact-container glass-panel">
+                <h2 class="glitch-text" data-text="INITIATE SEQUENCE">INITIATE SEQUENCE</h2>
+                <a href="mailto:hello@kaidenbell.com" class="contact-email metallic-text">hello@kaidenbell.com</a>
+                <a href="#" class="btn-primary glass-panel">Contact Me?</a>
+                
+                <div class="social-links">
+                    <a href="#" class="social-link">GitHub</a>
+                    <a href="#" class="social-link">LinkedIn</a>
+                    <a href="#" class="social-link">Dribbble</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

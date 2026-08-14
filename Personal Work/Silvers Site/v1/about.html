@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILVERS | About</title>
+    <meta name="description" content="About SILVERS, a premium COD editing studio.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Page Specific Styles */
+        .page-hero {
+            padding: 14rem 0 6rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .page-title {
+            font-size: clamp(3rem, 12vw, 8rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            line-height: 0.9;
+        }
+        .page-subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .stats {
+            padding: 8rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-color);
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 4rem 2rem;
+            }
+        }
+        
+        .process .services-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        @media (max-width: 768px) {
+            .process .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Nav active state */
+        .nav-link.active {
+            color: var(--text-color);
+        }
+        .nav-link.active::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">SILVERS</a>
+        <div class="nav-links">
+            <a href="work.html" class="nav-link">Work</a>
+            <a href="about.html" class="nav-link active">About</a>
+            <a href="services.html" class="nav-link">Services</a>
+        </div>
+        <div class="nav-end">
+            <a href="contact.html" class="cta-link">Request an Edit</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="page-hero fade-in">
+        <div class="container">
+            <p class="section-label">The Studio</p>
+            <h1 class="page-title">ABOUT</h1>
+            <p class="page-subtitle">We are a premium editing studio dedicated to crafting the finest gaming content.</p>
+        </div>
+    </section>
+
+    <!-- Studio Philosophy -->
+    <section class="statement fade-in">
+        <div class="container">
+            <div class="statement-inner">
+                <p class="statement-label">Our Philosophy</p>
+                <div class="statement-content">
+                    <p class="statement-text">
+                        We bring a <strong>cinematic approach</strong> to gaming content. Craft and attention to detail are at the core of everything we do. 
+                        By working with top-tier content creators, we ensure that every frame is intentional and every cut leaves a lasting impact.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats fade-in">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item fade-in-stagger">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Projects Completed</div>
+                </div>
+                <div class="stat-item fade-in-stagger">
+                    <div class="stat-number">1M+</div>
+                    <div class="stat-label">Views Generated</div>
+                </div>
+                <div class="stat-item fade-in-stagger">
+                    <div class="stat-number">3+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="stat-item fade-in-stagger">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Client Satisfaction</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section class="services process fade-in" id="process">
+        <div class="container">
+            <p class="section-label">How We Work</p>
+            <h2 class="section-title">Our Process</h2>
+            <div class="services-grid">
+                <div class="service-item fade-in-stagger">
+                    <p class="service-number">01</p>
+                    <h3 class="service-name">CONSULTATION</h3>
+                    <p class="service-desc">Discuss your vision, gameplay style, and goals.</p>
+                </div>
+                <div class="service-item fade-in-stagger">
+                    <p class="service-number">02</p>
+                    <h3 class="service-name">FOOTAGE REVIEW</h3>
+                    <p class="service-desc">Analyze your clips, select the best moments.</p>
+                </div>
+                <div class="service-item fade-in-stagger">
+                    <p class="service-number">03</p>
+                    <h3 class="service-name">EDITING</h3>
+                    <p class="service-desc">Craft the edit with transitions, color grading, and sound.</p>
+                </div>
+                <div class="service-item fade-in-stagger">
+                    <p class="service-number">04</p>
+                    <h3 class="service-name">DELIVERY</h3>
+                    <p class="service-desc">Final review, revisions, and delivery in your preferred format.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta fade-in">
+        <div class="container">
+            <p class="section-label">Get Started</p>
+            <h2 class="cta-title">Ready to work<br>together?</h2>
+            <p class="cta-subtitle">Drop a line and let's build something that hits.</p>
+            <a href="contact.html" class="cta-button">Request an Edit</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <span class="footer-logo">SILVERS</span>
+                <div class="footer-links">
+                    <a href="https://youtube.com" class="footer-link" target="_blank" rel="noopener">YouTube</a>
+                    <a href="https://twitter.com" class="footer-link" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://instagram.com" class="footer-link" target="_blank" rel="noopener">Instagram</a>
+                    <a href="https://discord.com" class="footer-link" target="_blank" rel="noopener">Discord</a>
+                </div>
+                <span class="footer-copy">© 2026 Silvers. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ─── Nav scroll effect ───
+        const nav = document.getElementById('nav');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            if (currentScroll > 80) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+            lastScroll = currentScroll;
+        }, { passive: true });
+
+        // ─── Intersection Observer for fade-in animations ───
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -60px 0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // ─── Staggered fade-in for grid items ───
+        const staggerObserver = new IntersectionObserver((entries) => {
+            const visible = entries.filter(e => e.isIntersecting);
+            visible.forEach((entry, index) => {
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                    staggerObserver.unobserve(entry.target);
+                }, index * 120);
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-stagger').forEach(el => staggerObserver.observe(el));
+    </script>
+</body>
+</html>

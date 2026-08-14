@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaiden Bell | Portfolio</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Halftone Texture Overlay -->
+    <div class="halftone-overlay"></div>
+    
+    <!-- Scroll Progress -->
+    <div class="scroll-progress"></div>
+
+    <!-- Navigation -->
+    <nav class="site-nav">
+        <div class="nav-brand">KAIDEN_BELL //</div>
+        <div class="nav-links">
+            <a href="#about" class="nav-link">ABOUT</a>
+            <a href="#expertise" class="nav-link">DISCIPLINES</a>
+            <a href="#work" class="nav-link">WORK</a>
+            <a href="#contact" class="nav-link">CONTACT</a>
+        </div>
+    </nav>
+
+    <!-- Side Data Blocks -->
+    <div class="side-data side-data-left">
+        <div class="data-text">SYS.VER.2.4.1</div>
+        <div class="data-line"></div>
+        <div class="data-text">LAT 34.0522° // LONG -118.2437°</div>
+    </div>
+    <div class="side-data side-data-right">
+        <div class="swatches">
+            <div class="swatch swatch-black"></div>
+            <div class="swatch swatch-white"></div>
+            <div class="swatch swatch-orange"></div>
+        </div>
+        <div class="data-line"></div>
+        <div class="data-text">PORTFOLIO_2024</div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="hero-grid">
+                <!-- Concentric Circles Background -->
+                <div class="concentric-circles">
+                    <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="400" cy="400" r="100" class="circle-path"/>
+                        <circle cx="400" cy="400" r="200" class="circle-path"/>
+                        <circle cx="400" cy="400" r="300" class="circle-path"/>
+                        <circle cx="400" cy="400" r="400" class="circle-path"/>
+                    </svg>
+                </div>
+                
+                <div class="hero-typography">
+                    <h1 class="hero-title animate-up" style="--delay: 0.1s">
+                        <span class="text-black">KAIDEN</span><br>
+                        <span class="text-orange indent">BELL</span>
+                    </h1>
+                </div>
+
+                <div class="hero-portrait-container animate-in" style="--delay: 0.4s">
+                    <div class="orange-sphere"></div>
+                    <div class="hero-portrait">
+                        <!-- Portrait Photo Placeholder -->
+                    </div>
+                </div>
+
+                <div class="hero-meta animate-up" style="--delay: 0.6s">
+                    <p class="hero-tagline">DEVELOPER / DESIGNER / BUILDER</p>
+                    <a href="#contact" class="cta-button primary-cta">CONTACT ME?</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about section-padding" id="about">
+            <div class="container grid-layout">
+                <div class="grid-col-4">
+                    <h2 class="section-title">01 // ABOUT</h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="grid-col-8">
+                    <p class="about-text animate-fade">
+                        I'm Kaiden Bell — a developer and designer who builds at the intersection of engineering and interface craft. I care about the details that make digital products feel intentional, from system architecture to the micro-interactions people never consciously notice but always feel.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expertise Section -->
+        <section class="expertise section-padding" id="expertise">
+            <div class="container">
+                <div class="grid-layout mb-large">
+                    <div class="grid-col-4">
+                        <h2 class="section-title">02 // DISCIPLINES</h2>
+                        <div class="section-line"></div>
+                    </div>
+                </div>
+
+                <div class="expertise-list">
+                    <div class="expertise-item animate-slide-right">
+                        <div class="expertise-number">01</div>
+                        <div class="expertise-content">
+                            <h3>WEB DEVELOPMENT</h3>
+                            <p>Architecting robust, scalable front-end systems with a focus on performance and accessibility.</p>
+                        </div>
+                    </div>
+                    <div class="expertise-item animate-slide-right" style="--delay: 0.2s">
+                        <div class="expertise-number">02</div>
+                        <div class="expertise-content">
+                            <h3>FULL-STACK ENGINEERING</h3>
+                            <p>Connecting seamless interfaces with powerful backend logic, databases, and APIs.</p>
+                        </div>
+                    </div>
+                    <div class="expertise-item animate-slide-right" style="--delay: 0.4s">
+                        <div class="expertise-number">03</div>
+                        <div class="expertise-content">
+                            <h3>UI/UX DESIGN</h3>
+                            <p>Crafting intuitive, aesthetically striking experiences grounded in user psychology and visual hierarchy.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Work Section -->
+        <section class="work section-padding" id="work">
+            <div class="container">
+                <div class="grid-layout mb-large">
+                    <div class="grid-col-4">
+                        <h2 class="section-title">03 // SELECTED WORK</h2>
+                        <div class="section-line"></div>
+                    </div>
+                </div>
+
+                <div class="work-grid">
+                    <!-- Project 1 -->
+                    <article class="project-card animate-up">
+                        <div class="project-image-wrapper">
+                            <div class="project-image image-placeholder-1"></div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-meta">
+                                <span class="project-tag">WEB APP</span>
+                                <span class="project-year">2024</span>
+                            </div>
+                            <h3 class="project-title">LUMINARY DASHBOARD</h3>
+                            <p class="project-desc">Financial analytics interface system.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 2 -->
+                    <article class="project-card animate-up" style="--delay: 0.2s">
+                        <div class="project-image-wrapper">
+                            <div class="project-image image-placeholder-2"></div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-meta">
+                                <span class="project-tag">PLATFORM</span>
+                                <span class="project-year">2023</span>
+                            </div>
+                            <h3 class="project-title">VECTRA PLATFORM</h3>
+                            <p class="project-desc">B2B SaaS operations management.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 3 -->
+                    <article class="project-card animate-up">
+                        <div class="project-image-wrapper">
+                            <div class="project-image image-placeholder-3"></div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-meta">
+                                <span class="project-tag">STUDIO SITE</span>
+                                <span class="project-year">2023</span>
+                            </div>
+                            <h3 class="project-title">ARCLINE STUDIO</h3>
+                            <p class="project-desc">Architecture firm portfolio experience.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 4 -->
+                    <article class="project-card animate-up" style="--delay: 0.2s">
+                        <div class="project-image-wrapper">
+                            <div class="project-image image-placeholder-4"></div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-meta">
+                                <span class="project-tag">MOBILE UI</span>
+                                <span class="project-year">2022</span>
+                            </div>
+                            <h3 class="project-title">MERIDIAN APP</h3>
+                            <p class="project-desc">Wellness tracking and habit formation.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact section-padding" id="contact">
+            <div class="container grid-layout">
+                <div class="grid-col-4">
+                    <h2 class="section-title">04 // CONTACT</h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="grid-col-8 contact-content">
+                    <h2 class="contact-heading animate-up">LET'S BUILD SOMETHING EXTRAORDINARY.</h2>
+                    <div class="contact-actions animate-up" style="--delay: 0.2s">
+                        <a href="mailto:hello@kaidenbell.com" class="cta-button primary-cta giant-cta">CONTACT ME?</a>
+                        <div class="contact-email">HELLO@KAIDENBELL.COM</div>
+                    </div>
+                    
+                    <div class="social-links animate-up" style="--delay: 0.4s">
+                        <a href="#" class="social-link">GITHUB</a>
+                        <a href="#" class="social-link">LINKEDIN</a>
+                        <a href="#" class="social-link">DRIBBBLE</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

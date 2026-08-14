@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILVERS | Services</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .services-detail-section {
+            padding: 8rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 4rem;
+            padding: 4rem 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .service-row:first-child {
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .service-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .service-number {
+            font-size: 1rem;
+            color: #555555;
+            letter-spacing: 0.2em;
+        }
+
+        .service-title {
+            font-size: 2.5rem;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .service-description {
+            font-size: 1.25rem;
+            color: #888888;
+            line-height: 1.6;
+            margin: 0;
+            align-self: center;
+        }
+
+        .pricing-section {
+            padding: 8rem 5%;
+            text-align: center;
+            background-color: #050505;
+        }
+
+        .pricing-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .pricing-title {
+            font-size: 1rem;
+            color: #555555;
+            letter-spacing: 0.2em;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .pricing-statement {
+            font-size: 2rem;
+            font-weight: 400;
+            line-height: 1.4;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .cta-section {
+            padding: 8rem 5%;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .service-row {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 3rem 0;
+            }
+            .pricing-statement {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Nav active state */
+        .nav-link.active {
+            color: var(--text-color);
+        }
+        .nav-link.active::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">SILVERS</a>
+        <div class="nav-links">
+            <a href="work.html" class="nav-link">Work</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="services.html" class="nav-link active">Services</a>
+        </div>
+        <div class="nav-end">
+            <a href="contact.html" class="cta-link">Request an Edit</a>
+        </div>
+    </nav>
+
+    <header class="hero scroll-fade">
+        <div class="hero-content">
+            <h1 class="hero-title">SERVICES</h1>
+            <p class="hero-subtitle">What we bring to the table</p>
+        </div>
+    </header>
+
+    <section class="services-detail-section">
+        <div class="service-row scroll-fade">
+            <div class="service-meta">
+                <span class="service-number">01</span>
+                <h2 class="service-title">MONTAGES</h2>
+            </div>
+            <p class="service-description">Full-length montage edits with cinematic transitions, color grading, and audio-synced design. We take raw gameplay and transform it into a visual experience. Includes custom intro/outro sequences.</p>
+        </div>
+
+        <div class="service-row scroll-fade">
+            <div class="service-meta">
+                <span class="service-number">02</span>
+                <h2 class="service-title">FRAGMOVIES</h2>
+            </div>
+            <p class="service-description">Narrative-driven fragmovies that tell a story through gameplay. Carefully paced with atmospheric builds, climactic moments, and professional sound design.</p>
+        </div>
+
+        <div class="service-row scroll-fade">
+            <div class="service-meta">
+                <span class="service-number">03</span>
+                <h2 class="service-title">SHORT FORM</h2>
+            </div>
+            <p class="service-description">Vertical and quick-cut edits optimized for TikTok, YouTube Shorts, and Instagram Reels. Fast, punchy, algorithm-friendly content that stops the scroll.</p>
+        </div>
+
+        <div class="service-row scroll-fade">
+            <div class="service-meta">
+                <span class="service-number">04</span>
+                <h2 class="service-title">MOTION GRAPHICS</h2>
+            </div>
+            <p class="service-description">Custom animated intros, lower thirds, transitions, and branded overlays. Everything you need to make your channel look professional.</p>
+        </div>
+
+        <div class="service-row scroll-fade">
+            <div class="service-meta">
+                <span class="service-number">05</span>
+                <h2 class="service-title">COLOR GRADING</h2>
+            </div>
+            <p class="service-description">Professional color work that sets the mood. Cinematic LUTs, custom grades, and a signature look that makes your content stand out.</p>
+        </div>
+
+        <div class="service-row scroll-fade">
+            <div class="service-meta">
+                <span class="service-number">06</span>
+                <h2 class="service-title">SOUND DESIGN</h2>
+            </div>
+            <p class="service-description">Custom audio mixing, SFX layering, and music synchronization. Every hit, transition, and beat drop is precisely timed.</p>
+        </div>
+    </section>
+
+    <section class="pricing-section scroll-fade">
+        <div class="pricing-content">
+            <h3 class="pricing-title">Pricing Philosophy</h3>
+            <p class="pricing-statement">Every project is unique. Pricing is based on scope, complexity, and turnaround time. Get in touch for a custom quote.</p>
+        </div>
+    </section>
+
+    <section class="cta-section scroll-fade">
+        <a href="contact.html" class="btn">Get a Quote</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <span class="footer-logo">SILVERS</span>
+                <div class="footer-links">
+                    <a href="https://youtube.com/@SilversFX" class="footer-link" target="_blank" rel="noopener">YouTube</a>
+                    <a href="https://twitter.com/SilversFX" class="footer-link" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://instagram.com" class="footer-link" target="_blank" rel="noopener">Instagram</a>
+                    <a href="https://discord.com" class="footer-link" target="_blank" rel="noopener">Discord</a>
+                </div>
+                <span class="footer-copy">© 2026 Silvers. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ─── Nav scroll effect ───
+        const nav = document.getElementById('nav');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            if (currentScroll > 80) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+            lastScroll = currentScroll;
+        }, { passive: true });
+
+        // Scroll fade animations
+        const fadeElements = document.querySelectorAll('.scroll-fade');
+        
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        });
+
+        fadeElements.forEach(element => {
+            fadeObserver.observe(element);
+        });
+    </script>
+</body>
+</html>
