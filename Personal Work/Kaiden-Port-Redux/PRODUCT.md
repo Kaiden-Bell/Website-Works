@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Begin with vanilla HTML / CSS / JS. Migrate to Vite + TypeScript once a design direction is confirmed. Deploy target is undecided.
+Vanilla HTML / CSS / JS for now. Migrate to Vite + TypeScript once a design direction is confirmed. Deploy target is undecided.
 
 ## Users
 
@@ -33,9 +33,8 @@ Visitors arrive from job boards, LinkedIn, GitHub, or direct referral. They may 
 - No existing projects or case-study assets yet — these will be supplied later.
 - Content sections (projects, about, contact, etc.) are not yet locked; future design work will propose them.
 - The primary call-to-action must appear in the hero section and repeat at the end of the page; exact CTA copy is not yet finalized.
-- Visual direction is in active, multi-version exploration rather than locked: five candidate directions were built (`v1`–`v5`), Kaiden is currently iterating on `v1` (Modern Minimalism), and the intent is to develop multiple versions before merging the strongest ideas into one final portfolio. No single direction is committed yet.
-- `v1` has typography/style sub-variants at `v1a`, `v1b`, `v1c` (same structure and copy, different type systems: Editorial Serif, Structural Grotesk, Poster Condensed) — an in-progress exploration pattern future work should continue rather than replace.
-- No in-session image-generation tool is available; hero/portrait imagery is produced by writing a prompt for the user to run through Nano Banana externally. Output files land in `assets/generated/` at the project root (prompts tracked in `assets/generated/prompts.md`) for wiring in afterward.
+- This project is a deliberate restart of an earlier exploration (`Kaiden Portfolio`, sibling project, directions v1–v5 plus v1a/v1b/v1c type-system sub-variants). None of those directions were kept — this is a clean-slate visual exploration with new inspiration and new ideas, not a continuation or refinement of any prior direction.
+- No in-session image-generation tool is available; hero/portrait imagery is produced by writing a prompt for the user to run through Nano Banana externally, with output files wired in afterward.
 
 ## Evidence on Hand
 

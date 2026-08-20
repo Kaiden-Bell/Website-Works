@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaiden Bell | Developer & Designer — Editorial Serif</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Fraunces:opsz,wght,ital@9..144,300..700,0;9..144,400..600,1&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-brand">KAIDEN BELL</div>
+        <div class="nav-links">
+            <a href="#work" class="nav-link">Work</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <main data-scroll-container>
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div class="hero-titles load-stagger">
+                        <h1 class="hero-name load-item">KAIDEN</h1>
+                        <h1 class="hero-name load-item offset-text">BELL</h1>
+                    </div>
+                    <div class="hero-meta load-item">
+                        <p class="hero-tagline">Developer. Designer. Builder.</p>
+                        <a href="#contact" class="cta-button primary-cta">Contact Me?</a>
+                    </div>
+                </div>
+                <div class="hero-portrait-wrapper load-item" data-parallax="0.1">
+                    <img class="hero-portrait" src="hero.jpg" alt="Portrait of Kaiden Bell">
+                </div>
+            </div>
+            <div class="scroll-indicator load-item">
+                <span class="scroll-text">Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about section-padding" id="about">
+            <div class="container reveal-up">
+                <div class="about-grid">
+                    <div class="about-label">
+                        <span class="accent-dot"></span>
+                        <h2>Introduction</h2>
+                    </div>
+                    <div class="about-text">
+                        <p class="large-copy">
+                            I'm Kaiden Bell — a developer and designer who builds at the intersection of engineering and interface craft. I care about the details that make digital products feel intentional, from system architecture to the micro-interactions people never consciously notice but always feel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expertise Section -->
+        <section class="expertise section-padding" id="expertise">
+            <div class="container">
+                <div class="section-header reveal-up">
+                    <h2>Disciplines</h2>
+                </div>
+                
+                <ul class="expertise-list">
+                    <li class="expertise-item reveal-up">
+                        <div class="item-number">01</div>
+                        <div class="item-content">
+                            <h3>Web Development</h3>
+                            <p>Crafting robust, scalable front-end architectures that prioritize performance and accessibility without sacrificing aesthetic ambition.</p>
+                        </div>
+                    </li>
+                    <li class="expertise-item reveal-up">
+                        <div class="item-number">02</div>
+                        <div class="item-content">
+                            <h3>Full-Stack Engineering</h3>
+                            <p>Architecting seamless data flows from server to client, building resilient systems that power dynamic user experiences.</p>
+                        </div>
+                    </li>
+                    <li class="expertise-item reveal-up">
+                        <div class="item-number">03</div>
+                        <div class="item-content">
+                            <h3>UI/UX Design</h3>
+                            <p>Translating complex requirements into intuitive, elegant interfaces. Prototyping interactions that elevate the core product.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Selected Work Section -->
+        <section class="work section-padding" id="work">
+            <div class="container">
+                <div class="section-header reveal-up">
+                    <h2>Selected Work</h2>
+                </div>
+                
+                <div class="work-gallery">
+                    <!-- Project 1 (Large) -->
+                    <article class="project-card large reveal-up">
+                        <div class="project-image-wrapper">
+                            <div class="project-image placeholder-gradient"></div>
+                            <div class="project-overlay">
+                                <a href="#" class="view-project-btn">View Project</a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-meta">
+                                <h3>Luminary Dashboard</h3>
+                                <span class="project-category">Full-Stack / UI</span>
+                            </div>
+                            <p>A unified analytics interface for enterprise data teams.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 2 (Small Left) -->
+                    <article class="project-card small reveal-up">
+                        <div class="project-image-wrapper">
+                            <div class="project-image placeholder-gradient"></div>
+                            <div class="project-overlay">
+                                <a href="#" class="view-project-btn">View Project</a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-meta">
+                                <h3>Vectra Platform</h3>
+                                <span class="project-category">Web Development</span>
+                            </div>
+                            <p>High-performance marketing site built with fluid typography.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 3 (Small Right) -->
+                    <article class="project-card small offset-down reveal-up">
+                        <div class="project-image-wrapper">
+                            <div class="project-image placeholder-gradient"></div>
+                            <div class="project-overlay">
+                                <a href="#" class="view-project-btn">View Project</a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-meta">
+                                <h3>Arcline Studio</h3>
+                                <span class="project-category">UI/UX Design</span>
+                            </div>
+                            <p>Reimagining the architectural portfolio experience.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 4 (Wide) -->
+                    <article class="project-card wide reveal-up">
+                        <div class="project-image-wrapper">
+                            <div class="project-image placeholder-gradient"></div>
+                            <div class="project-overlay">
+                                <a href="#" class="view-project-btn">View Project</a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-meta">
+                                <h3>Meridian App</h3>
+                                <span class="project-category">Product Design</span>
+                            </div>
+                            <p>Personal finance tracking with emotional resonance.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact section-padding" id="contact">
+            <div class="container reveal-up">
+                <div class="contact-content">
+                    <h2 class="contact-title">Let's Build<br>Something.</h2>
+                    <a href="mailto:hello@kaidenbell.com" class="cta-button primary-cta lg">Contact Me?</a>
+                    <div class="contact-info">
+                        <p class="email-display">hello@kaidenbell.com</p>
+                        <div class="social-links">
+                            <a href="#" target="_blank" rel="noopener noreferrer">GitHub</a>
+                            <a href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                            <a href="#" target="_blank" rel="noopener noreferrer">Dribbble</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="main-footer">
+            <div class="container">
+                <p>&copy; 2026 Kaiden Bell. All rights reserved.</p>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

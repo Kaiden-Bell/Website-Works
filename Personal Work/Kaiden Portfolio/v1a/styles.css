@@ -4,11 +4,11 @@
     --bg-secondary: #1A1A1A;
     --text-primary: #FFFFFF;
     --text-secondary: #A0A0A0;
-    --accent: #DC2626; /* Vibrant crimson */
+    --accent: #E8674A; /* Warm coral */
     --border-color: #2A2A2A;
 
-    /* Typography */
-    --font-display: 'Syne', sans-serif;
+    /* Typography — Editorial Serif */
+    --font-display: 'Fraunces', serif;
     --font-body: 'Space Grotesk', sans-serif;
 
     /* Spacing & Layout */
@@ -47,7 +47,7 @@ a {
 h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.1;
 }
 
@@ -78,7 +78,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .cursor-outline.is-active {
     transform: translate(-50%, -50%) scale(1.5);
-    background-color: rgba(220, 38, 38, 0.1);
+    background-color: rgba(232, 103, 74, 0.12);
 }
 
 /* Navigation */
@@ -99,9 +99,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-brand {
     font-family: var(--font-display);
-    font-weight: 800;
+    font-weight: 600;
+    font-style: italic;
     font-size: 1.25rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
 }
 
 .nav-links {
@@ -151,7 +152,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     position: relative;
-    padding: 0 var(--padding-global);
+    padding: calc(var(--nav-height) + 2rem) var(--padding-global) 150px;
     overflow: hidden;
 }
 
@@ -177,9 +178,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-name {
     font-size: clamp(4rem, 10vw, 9rem);
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
-    line-height: 0.9;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    font-weight: 500;
+    line-height: 0.92;
     white-space: nowrap;
 }
 
@@ -188,12 +190,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-meta {
-    margin-top: clamp(2rem, 4vw, 4rem);
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
     padding-left: 0.5rem;
 }
 
 .hero-tagline {
-    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.125rem, 1.8vw, 1.5rem);
+    color: var(--text-primary);
     margin-bottom: 2rem;
 }
 
@@ -214,6 +220,15 @@ h1, h2, h3, h4, h5, h6 {
     background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-color) 100%);
     border-radius: 4px; /* Slight softening */
     position: relative;
+}
+
+.hero-portrait {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 4px;
 }
 
 /* CTA Button */
@@ -312,9 +327,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .about-label h2 {
     font-size: 1.25rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-family: var(--font-body);
+    text-transform: none;
+    font-style: italic;
+    letter-spacing: 0;
+    font-family: var(--font-display);
     font-weight: 400;
 }
 

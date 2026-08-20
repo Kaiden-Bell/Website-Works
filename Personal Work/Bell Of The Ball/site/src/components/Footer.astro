@@ -1,0 +1,17 @@
+---
+const year = new Date().getFullYear();
+// TODO(client): replace with the real inbox — no business email is confirmed yet.
+const CONTACT_EMAIL = 'hello@belloftheball.example';
+---
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>&copy; {year} Bell of the Ball. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="https://www.facebook.com/profile.php?id=100095562942212" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://www.instagram.com/belloftheballinc/" target="_blank" rel="noopener">Instagram</a>
+      <a href="#">Pinterest</a>
+      <a href={`mailto:${CONTACT_EMAIL}`}>Inquiries</a>
+    </div>
+  </div>
+</footer>

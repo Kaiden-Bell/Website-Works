@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Static HTML/CSS/JS for initial design exploration. Migration to Vite + TypeScript planned once a visual direction is approved.
+Direction approved: v3, palette/type variant "b" — Botanical Ledger (see `DESIGN.md`). The full site is scaffolded in `site/` on Astro 5, with a React island for the filterable portfolio and Tailwind CSS v4 (theme tokens mirror `DESIGN.md`, defined in `site/src/styles/global.css`). Static output, no server or database — a newsletter signup, if added, uses a third-party form embed (e.g. Mailchimp/ConvertKit/Buttondown) rather than custom backend infrastructure. Live pages: Home, About, Services, Portfolio, Contact. Pricing and Testimonials pages are not yet built — waiting on that content being finalized. The `site/src/pages/contact.astro` and `Footer.astro` email address is a placeholder (`hello@belloftheball.example`, an intentionally non-resolving domain) pending a confirmed business inbox/phone.
 
 ## Users
 
@@ -35,9 +35,9 @@ Clients typically discover the business through referrals or social media, visit
 - Party concession rentals (equipment for events)
 
 **Constraints:**
-- No real photography, video, or portfolio assets are available yet. All media slots must use CSS stand-in colors/gradients sized for drop-in replacement with zero layout shift.
-- No pricing or package tiers have been confirmed. Do not fabricate them.
-- No testimonials or case studies are on hand. Do not invent them.
+- Real event photography now lives in `assets/photos/` (organized under `hero/`, `about/`, `services/`, `portfolio/`) and is wired into `v3/b` as actual `<img>` elements — the CSS gradient stand-ins are retired in that build. `assets/photos/Potential Photo Candidates/` holds the client's fuller curated set (29 images) to draw further selections from as the site expands.
+- Two photos in that candidate set must not be used publicly without explicit consent: `table-4x3-01.jpg` is a memorial/celebration-of-life service table bearing a specific deceased individual's photo, and `table-16x9-01.jpg` shows a real couple's full names and wedding date. Neither is used anywhere in the current build.
+- Pricing/package tiers and testimonials/case studies now exist as real client evidence but are not yet finalized or shared with this project. Do not fabricate specific numbers, tiers, or quotes until the confirmed values are provided.
 
 ## Brand Commitments
 
@@ -48,7 +48,9 @@ Clients typically discover the business through referrals or social media, visit
 ## Evidence on Hand
 
 - A detailed creative brief ([BOTB-Prompt.md](BOTB-Prompt.md)) providing five distinct design directions (v1–v5), each with style tags, layout architecture, and functional application notes.
-- No real event photography, video footage, testimonials, client logos, or case studies. Future work must not fabricate any of these.
+- Real event photography is in `assets/photos/` and live in the `v3/b` build (hero, about, all four services, and the portfolio grid). A larger curated set (29 images, see `Potential Photo Candidates/`) remains available for the Portfolio page and future pages.
+- Real pricing/package tiers and real testimonials/case studies exist with the client but are not yet finalized or shared with this project. Specific values must still not be fabricated.
+- No video footage or client logos are on hand. Future work must not fabricate these.
 
 ## Product Principles
 
