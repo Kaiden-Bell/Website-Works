@@ -1,0 +1,61 @@
+---
+/*
+ * Ported from components/faq-section.txt (a shadcn/Next drop).
+ *
+ * Deliberate departures from the source:
+ *  - No React island. The content is static, so this is plain Astro — the
+ *    original's `Card` + `next/link` dependencies aren't needed at all.
+ *  - The file's CSS block (a full shadcn oklch palette) was NOT applied. It
+ *    would have shadowed the Botanical Ledger tokens in global.css. Colours
+ *    resolve through those tokens instead.
+ *  - `rounded-lg` + `shadow-sm` dropped for facets and flat fills, per the
+ *    Facet Rule and Flat-By-Default Rule in DESIGN.md.
+ */
+import { FAQ_ITEMS } from '../data/faq';
+
+interface Props {
+  contactHref?: string;
+}
+
+const { contactHref = '/contact' } = Astro.props;
+
+// Facets cycle so no two adjacent cards share a silhouette.
+const FACETS = [13, 14, 15, 16, 17, 18];
+const isDev = import.meta.env.DEV;
+
+// Unanswered questions are visible in dev (badged, so they're hard to miss) but
+// never ship — otherwise a production visitor reads "TODO(client): confirm the
+// service area" as the answer. Fill the answer in and flip `status` to
+// 'confirmed' in src/data/faq.ts to publish one.
+const items = isDev ? FAQ_ITEMS : FAQ_ITEMS.filter((item) => item.status === 'confirmed');
+---
+
+<section class="faq-section" id="faq">
+  <div class="faq-container">
+    <div class="faq-head">
+      <span class="section-label reveal">COMMON QUESTIONS</span>
+      <h2 class="reveal">Before You Ask</h2>
+      <p class="reveal">
+        The things people want to know before they pick up the phone. Anything else, ask us directly — we would
+        rather answer it properly.
+      </p>
+    </div>
+
+    <div class="faq-grid">
+      {items.map((item, i) => (
+        <div class={`faq-item shape-${FACETS[i % FACETS.length]} reveal`}>
+          <span class="label-text faq-num">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            {item.status === 'todo' && isDev && <span class="faq-todo">Needs client answer</span>}
+            <h3 class="faq-q">{item.question}</h3>
+            <p class="faq-a">{item.answer}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <p class="faq-footnote reveal">
+      Still have a question? <a href={contactHref}>Get in touch</a>.
+    </p>
+  </div>
+</section>

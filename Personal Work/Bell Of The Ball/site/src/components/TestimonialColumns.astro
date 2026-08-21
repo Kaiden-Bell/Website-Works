@@ -1,0 +1,94 @@
+---
+/*
+ * Ported from components/testimonial-section.txt (a shadcn/Next drop using
+ * `motion/react`).
+ *
+ * Deliberate departures from the source:
+ *  - No `motion` package. The vertical marquee is the same technique the
+ *    original used (duplicate the list, translate -50%, mask the edges) done
+ *    in CSS keyframes, so this ships as zero JS.
+ *  - `rounded-3xl` and `shadow-lg shadow-primary/10` dropped for facets and
+ *    flat fills, per the Facet Rule and Flat-By-Default Rule in DESIGN.md.
+ *  - The source's randomuser.me avatars are gone. Substituting stock faces for
+ *    real clients is fabricated evidence — see PRODUCT.md principle 3. Cards
+ *    fall back to a faceted monogram unless a real photo is supplied.
+ */
+import { TESTIMONIALS, TESTIMONIALS_ARE_PLACEHOLDER } from '../data/testimonials';
+
+// Deal the quotes round-robin across three columns so the count doesn't have
+// to be a multiple of three, and neighbouring columns never show consecutive
+// quotes side by side. Durations are deliberately uneven so the columns drift
+// out of phase instead of scrolling as one block.
+const COLUMN_META = [
+  { duration: '46s', className: '' },
+  { duration: '58s', className: 'hidden md:block' },
+  { duration: '52s', className: 'hidden lg:block' },
+];
+
+const columns = COLUMN_META.map((meta, ci) => ({
+  ...meta,
+  items: TESTIMONIALS.filter((_, i) => i % COLUMN_META.length === ci),
+}));
+
+const FACETS = [13, 15, 17, 14, 16, 18];
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
+
+const isDev = import.meta.env.DEV;
+---
+
+<section class="testimonials" id="testimonials">
+  <div class="testimonials-container">
+    <div class="testimonials-head">
+      <span class="section-label reveal">IN THEIR WORDS</span>
+      <h2 class="reveal">What Clients Say</h2>
+      <p class="reveal">
+        Every event here was someone's milestone. These are the people who trusted us with one.
+      </p>
+    </div>
+
+    {TESTIMONIALS_ARE_PLACEHOLDER && isDev && (
+      <p class="placeholder-banner">
+        TODO(client) — placeholder testimonials. Replace src/data/testimonials.ts with the confirmed quotes
+        before launch. This banner is dev-only and will not appear in a production build.
+      </p>
+    )}
+
+    <div class="tm-columns">
+      {columns.map((column, ci) => (
+        <div class={`tm-column ${column.className}`}>
+          <div class="tm-track" style={`--tm-duration: ${column.duration};`}>
+            {/* List rendered twice — the -50% translate lands on the seam. */}
+            {[0, 1].map((pass) =>
+              column.items.map((t, i) => (
+                <figure
+                  class={`tm-card ledger-panel is-faceted shape-${FACETS[(i * COLUMN_META.length + ci) % FACETS.length]}`}
+                  aria-hidden={pass === 1 ? 'true' : undefined}
+                >
+                  <blockquote class="tm-quote">{t.quote}</blockquote>
+                  <figcaption class="tm-attrib">
+                    {t.image ? (
+                      <img class="tm-avatar" src={t.image} alt="" width="44" height="44" loading="lazy" />
+                    ) : (
+                      <span class="tm-monogram" aria-hidden="true">{initials(t.name)}</span>
+                    )}
+                    <span>
+                      <span class="tm-name">{t.name}</span>
+                      <span class="label-text" style="display: block; margin-top: 0.15rem;">{t.role}</span>
+                    </span>
+                  </figcaption>
+                </figure>
+              ))
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

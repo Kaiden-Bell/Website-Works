@@ -1,0 +1,662 @@
+import * as React from "react"
+import { addPropertyControls, ControlType, useIsStaticRenderer, Link } from "framer"
+import { AnimatePresence, motion } from "framer-motion"
+
+// User request: Create DynamicPricing with a custom animated dropdown, selectable add-on options, live animated pricing breakdown + total, optional CTA, editable event/pricing data via property controls, responsive two-column-to-single-column behavior via ResizeObserver, SSR-safe rendering, and formatted tabular-number currency output.
+
+interface PricingOption {
+    name: string
+    price: number
+}
+
+interface EventType {
+    name: string
+    basePrice: number
+    options: PricingOption[]
+}
+
+interface FontControlValue {
+    fontFamily?: string
+    fontSize?: number | string
+    fontWeight?: number
+    lineHeight?: number | string
+    letterSpacing?: number | string
+    textAlign?: "left" | "center" | "right"
+    fontStyle?: "normal" | "italic"
+}
+
+interface MyComponentProps {
+    eventTypes: EventType[]
+    currency: string
+    label: string
+    ctaLabel: string
+    ctaLink: string
+    showCta: boolean
+    accent: string
+    surface: string
+    pageText: string
+    mutedText: string
+    panelFill: string
+    borderColor: string
+    cornerRadius: number
+    fontFamily: FontControlValue
+    style?: React.CSSProperties
+}
+
+/**
+ * @framerSupportedLayoutWidth any
+ * @framerSupportedLayoutHeight any
+ */
+export default function DynamicPricing(props: MyComponentProps) {
+    const {
+        eventTypes,
+        currency,
+        label,
+        ctaLabel,
+        ctaLink,
+        showCta,
+        accent,
+        surface,
+        pageText,
+        mutedText,
+        panelFill,
+        borderColor,
+        cornerRadius,
+        fontFamily,
+        style,
+    } = props
+
+    const isStaticRenderer = useIsStaticRenderer()
+    const rootRef = React.useRef<HTMLDivElement | null>(null)
+    const [isDropdownOpen, setDropdownOpen] = React.useState(false)
+    const [selectedEventName, setSelectedEventName] = React.useState("")
+    const [selectedOptionKeys, setSelectedOptionKeys] = React.useState<string[]>([])
+    const [isNarrow, setIsNarrow] = React.useState(false)
+
+    React.useEffect(() => {
+        if (typeof window === "undefined") return
+        if (!rootRef.current || typeof ResizeObserver === "undefined") return
+
+        const element = rootRef.current
+        const observer = new ResizeObserver((entries) => {
+            const entry = entries[0]
+            if (!entry) return
+            const nextNarrow = entry.contentRect.width < 820
+            React.startTransition(() => setIsNarrow(nextNarrow))
+        })
+        observer.observe(element)
+        return () => observer.disconnect()
+    }, [])
+
+    const selectedEvent = React.useMemo(
+        () => eventTypes.find((eventType) => eventType.name === selectedEventName) ?? null,
+        [eventTypes, selectedEventName]
+    )
+
+    const selectedOptions = React.useMemo(() => {
+        if (!selectedEvent) return []
+        return selectedEvent.options.filter((option) =>
+            selectedOptionKeys.includes(`${selectedEvent.name}::${option.name}`)
+        )
+    }, [selectedEvent, selectedOptionKeys])
+
+    const total = React.useMemo(() => {
+        if (!selectedEvent) return 0
+        const optionsTotal = selectedOptions.reduce((sum, option) => sum + option.price, 0)
+        return selectedEvent.basePrice + optionsTotal
+    }, [selectedEvent, selectedOptions])
+
+    const formatPrice = React.useCallback(
+        (value: number) => `${currency}${new Intl.NumberFormat(undefined).format(value)}`,
+        [currency]
+    )
+
+    const handleSelectEvent = React.useCallback((name: string) => {
+        React.startTransition(() => {
+            setSelectedEventName(name)
+            setSelectedOptionKeys([])
+            setDropdownOpen(false)
+        })
+    }, [])
+
+    const toggleOption = React.useCallback(
+        (optionName: string) => {
+            if (!selectedEvent) return
+            const key = `${selectedEvent.name}::${optionName}`
+            React.startTransition(() => {
+                setSelectedOptionKeys((prev) =>
+                    prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]
+                )
+            })
+        },
+        [selectedEvent]
+    )
+
+    const containerGap = 16
+    const effectiveTransition = isStaticRenderer ? { duration: 0 } : { duration: 0.24, ease: "easeOut" as const }
+
+    return (
+        <div
+            ref={rootRef}
+            style={{
+                position: "relative",
+                width: "100%",
+                height: "100%",
+                overflow: "hidden",
+                boxSizing: "border-box",
+                padding: 16,
+                background: surface,
+                color: pageText,
+                display: "flex",
+                flexDirection: "column",
+                gap: containerGap,
+                minWidth: 0,
+                minHeight: 0,
+                ...style,
+            }}
+        >
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
+                <div
+                    style={{
+                        ...fontFamily,
+                        color: mutedText,
+                        fontSize: 13,
+                        lineHeight: "1.3em",
+                    }}
+                >
+                    {label}
+                </div>
+                <div style={{ position: "relative" }}>
+                    <button
+                        type="button"
+                        aria-expanded={isDropdownOpen}
+                        aria-haspopup="listbox"
+                        onClick={() => React.startTransition(() => setDropdownOpen((prev) => !prev))}
+                        style={{
+                            ...fontFamily,
+                            width: "100%",
+                            borderRadius: cornerRadius,
+                            border: `1px solid ${borderColor}`,
+                            background: panelFill,
+                            color: pageText,
+                            fontSize: 15,
+                            lineHeight: "1.3em",
+                            textAlign: "left",
+                            padding: "12px 14px",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <span>{selectedEventName || "Choose event type"}</span>
+                        <span aria-hidden>{isDropdownOpen ? "−" : "+"}</span>
+                    </button>
+                    <AnimatePresence initial={false}>
+                        {isDropdownOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0, y: -4 }}
+                                animate={{ opacity: 1, height: "auto", y: 0 }}
+                                exit={{ opacity: 0, height: 0, y: -4 }}
+                                transition={effectiveTransition}
+                                style={{
+                                    overflow: "hidden",
+                                    position: "absolute",
+                                    left: 0,
+                                    right: 0,
+                                    top: "calc(100% + 8px)",
+                                    borderRadius: cornerRadius,
+                                    border: `1px solid ${borderColor}`,
+                                    background: panelFill,
+                                    zIndex: 10,
+                                }}
+                            >
+                                <div role="listbox" aria-label={label} style={{ padding: 8, display: "grid", gap: 6 }}>
+                                    {eventTypes.map((eventType) => (
+                                        <button
+                                            key={eventType.name}
+                                            type="button"
+                                            role="option"
+                                            aria-selected={selectedEventName === eventType.name}
+                                            onClick={() => handleSelectEvent(eventType.name)}
+                                            style={{
+                                                border: "none",
+                                                borderRadius: Math.max(8, cornerRadius - 6),
+                                                background:
+                                                    selectedEventName === eventType.name ? accent : "transparent",
+                                                color: selectedEventName === eventType.name ? panelFill : pageText,
+                                                textAlign: "left",
+                                                padding: "10px 12px",
+                                                cursor: "pointer",
+                                                ...fontFamily,
+                                            }}
+                                        >
+                                            {eventType.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </div>
+
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: isNarrow ? "column" : "row",
+                    gap: containerGap,
+                    flex: 1,
+                    minHeight: 0,
+                    minWidth: 0,
+                }}
+            >
+                <div
+                    style={{
+                        flex: isNarrow ? "0 0 auto" : "0 0 44%",
+                        minWidth: 0,
+                        minHeight: 0,
+                        background: panelFill,
+                        border: `1px solid ${borderColor}`,
+                        borderRadius: cornerRadius,
+                        padding: 14,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 10,
+                    }}
+                >
+                    <div style={{ ...fontFamily, fontSize: 14, lineHeight: "1.3em", color: mutedText }}>
+                        Add-ons
+                    </div>
+                    <div style={{ overflowY: "auto", minHeight: 0, display: "grid", gap: 8 }}>
+                        {!selectedEvent ? (
+                            <div
+                                style={{
+                                    ...fontFamily,
+                                    color: mutedText,
+                                    fontSize: 14,
+                                    lineHeight: "1.4em",
+                                    padding: "6px 2px",
+                                }}
+                            >
+                                Select an event type to see options
+                            </div>
+                        ) : (
+                            <AnimatePresence>
+                                {selectedEvent.options.map((option, index) => {
+                                    const optionKey = `${selectedEvent.name}::${option.name}`
+                                    const checked = selectedOptionKeys.includes(optionKey)
+                                    return (
+                                        <motion.button
+                                            key={optionKey}
+                                            type="button"
+                                            role="checkbox"
+                                            aria-checked={checked}
+                                            onClick={() => toggleOption(option.name)}
+                                            onKeyDown={(event) => {
+                                                if (event.key === "Enter" || event.key === " ") {
+                                                    event.preventDefault()
+                                                    toggleOption(option.name)
+                                                }
+                                            }}
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 6 }}
+                                            transition={
+                                                isStaticRenderer
+                                                    ? { duration: 0 }
+                                                    : { duration: 0.22, delay: index * 0.035 }
+                                            }
+                                            style={{
+                                                ...fontFamily,
+                                                borderRadius: Math.max(8, cornerRadius - 8),
+                                                border: `1px solid ${checked ? accent : borderColor}`,
+                                                background: checked ? `${accent}14` : panelFill,
+                                                color: pageText,
+                                                fontSize: 15,
+                                                lineHeight: "1.3em",
+                                                padding: "10px 12px",
+                                                cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "space-between",
+                                                gap: 12,
+                                                textAlign: "left",
+                                            }}
+                                        >
+                                            <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+                                                <span
+                                                    aria-hidden
+                                                    style={{
+                                                        width: 18,
+                                                        height: 18,
+                                                        borderRadius: 4,
+                                                        border: `1px solid ${checked ? accent : borderColor}`,
+                                                        background: checked ? accent : panelFill,
+                                                        color: panelFill,
+                                                        display: "inline-flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        fontSize: 12,
+                                                        flex: "0 0 auto",
+                                                    }}
+                                                >
+                                                    {checked ? "✓" : ""}
+                                                </span>
+                                                <span>{option.name}</span>
+                                            </span>
+                                            <span style={{ color: mutedText, fontVariantNumeric: "tabular-nums" }}>
+                                                {formatPrice(option.price)}
+                                            </span>
+                                        </motion.button>
+                                    )
+                                })}
+                            </AnimatePresence>
+                        )}
+                    </div>
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column", gap: containerGap }}>
+                    <div
+                        style={{
+                            flex: 1,
+                            minHeight: 0,
+                            borderRadius: cornerRadius,
+                            border: `1px solid ${borderColor}`,
+                            background: panelFill,
+                            padding: 14,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 10,
+                        }}
+                    >
+                        <div style={{ ...fontFamily, fontSize: 14, lineHeight: "1.3em", color: mutedText }}>
+                            Pricing breakdown
+                        </div>
+                        <div style={{ overflowY: "auto", minHeight: 0, display: "grid", gap: 8 }}>
+                            {!selectedEvent ? (
+                                <div style={{ ...fontFamily, color: mutedText, fontSize: 14, lineHeight: "1.4em" }}>
+                                    Select an event type to preview pricing
+                                </div>
+                            ) : (
+                                <AnimatePresence initial={false}>
+                                    <motion.div
+                                        key={`${selectedEvent.name}-base`}
+                                        initial={{ opacity: 0, y: 6 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 6 }}
+                                        transition={effectiveTransition}
+                                        style={{
+                                            ...fontFamily,
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            gap: 12,
+                                            fontSize: 14,
+                                            lineHeight: "1.3em",
+                                        }}
+                                    >
+                                        <span>{selectedEvent.name} base package</span>
+                                        <span style={{ fontVariantNumeric: "tabular-nums", textAlign: "right" }}>
+                                            {formatPrice(selectedEvent.basePrice)}
+                                        </span>
+                                    </motion.div>
+                                    {selectedOptions.map((option) => (
+                                        <motion.div
+                                            key={`${selectedEvent.name}-selected-${option.name}`}
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -6 }}
+                                            transition={effectiveTransition}
+                                            style={{
+                                                ...fontFamily,
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                gap: 12,
+                                                fontSize: 14,
+                                                lineHeight: "1.3em",
+                                            }}
+                                        >
+                                            <span>{option.name}</span>
+                                            <span
+                                                style={{
+                                                    fontVariantNumeric: "tabular-nums",
+                                                    textAlign: "right",
+                                                    color: pageText,
+                                                }}
+                                            >
+                                                {formatPrice(option.price)}
+                                            </span>
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                            )}
+                        </div>
+                    </div>
+
+                    <div
+                        style={{
+                            borderRadius: cornerRadius,
+                            border: `1px solid ${borderColor}`,
+                            background: panelFill,
+                            padding: 16,
+                            display: "grid",
+                            gap: 8,
+                        }}
+                    >
+                        <div style={{ ...fontFamily, color: mutedText, fontSize: 13, lineHeight: "1.3em" }}>
+                            Total estimated price
+                        </div>
+                        <div
+                            style={{
+                                ...fontFamily,
+                                fontSize: 40,
+                                fontWeight: 700,
+                                lineHeight: "1em",
+                                letterSpacing: "-0.02em",
+                                color: pageText,
+                                fontVariantNumeric: "tabular-nums",
+                            }}
+                        >
+                            {formatPrice(total)}
+                        </div>
+                        <div style={{ ...fontFamily, color: mutedText, fontSize: 12, lineHeight: "1.3em" }}>
+                            Estimate only — final quote may vary
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {showCta && (
+                ctaLink ? (
+                    <Link href={ctaLink}>
+                        <a
+                            style={{
+                                ...fontFamily,
+                                textDecoration: "none",
+                                borderRadius: cornerRadius,
+                                border: `1px solid ${accent}`,
+                                background: accent,
+                                color: panelFill,
+                                fontSize: 15,
+                                lineHeight: "1.3em",
+                                padding: "12px 14px",
+                                textAlign: "center",
+                                display: "block",
+                            }}
+                        >
+                            {ctaLabel}
+                        </a>
+                    </Link>
+                ) : (
+                    <button
+                        type="button"
+                        style={{
+                            ...fontFamily,
+                            borderRadius: cornerRadius,
+                            border: `1px solid ${accent}`,
+                            background: accent,
+                            color: panelFill,
+                            fontSize: 15,
+                            lineHeight: "1.3em",
+                            padding: "12px 14px",
+                            textAlign: "center",
+                            cursor: "pointer",
+                        }}
+                    >
+                        {ctaLabel}
+                    </button>
+                )
+            )}
+        </div>
+    )
+}
+
+addPropertyControls(DynamicPricing, {
+    eventTypes: {
+        type: ControlType.Array,
+        title: "Event Types",
+        defaultValue: [
+            {
+                name: "Wedding",
+                basePrice: 4500,
+                options: [
+                    { name: "Full Venue Styling", price: 1800 },
+                    { name: "Floral Design", price: 1200 },
+                    { name: "Catering Coordination", price: 1500 },
+                    { name: "Live Band", price: 2200 },
+                    { name: "Photography", price: 1600 },
+                ],
+            },
+            {
+                name: "Corporate Event",
+                basePrice: 3200,
+                options: [
+                    { name: "AV & Staging", price: 1400 },
+                    { name: "Branded Signage", price: 700 },
+                    { name: "Catering", price: 1900 },
+                    { name: "Keynote Production", price: 2500 },
+                ],
+            },
+            {
+                name: "Personal Event",
+                basePrice: 900,
+                options: [
+                    { name: "Balloon & Decor", price: 350 },
+                    { name: "DJ", price: 600 },
+                    { name: "Cake & Desserts", price: 300 },
+                    { name: "Photo Booth", price: 450 },
+                ],
+            },
+            {
+                name: "Product",
+                basePrice: 2600,
+                options: [
+                    { name: "Launch Set Design", price: 1500 },
+                    { name: "Press Kit", price: 800 },
+                    { name: "Influencer Hosting", price: 1300 },
+                    { name: "Videography", price: 1700 },
+                ],
+            },
+        ],
+        control: {
+            type: ControlType.Object,
+            controls: {
+                name: {
+                    type: ControlType.String,
+                    defaultValue: "Event Type",
+                },
+                basePrice: {
+                    type: ControlType.Number,
+                    defaultValue: 1000,
+                    min: 0,
+                    step: 50,
+                },
+                options: {
+                    type: ControlType.Array,
+                    defaultValue: [{ name: "Option", price: 200 }],
+                    control: {
+                        type: ControlType.Object,
+                        controls: {
+                            name: { type: ControlType.String, defaultValue: "Option" },
+                            price: { type: ControlType.Number, defaultValue: 200, min: 0, step: 50 },
+                        },
+                    },
+                },
+            },
+        },
+    },
+    currency: {
+        type: ControlType.String,
+        defaultValue: "$",
+        title: "Currency",
+    },
+    label: {
+        type: ControlType.String,
+        defaultValue: "What are you planning?",
+        title: "Label",
+    },
+    ctaLabel: {
+        type: ControlType.String,
+        defaultValue: "Request a Quote",
+        title: "CTA Label",
+    },
+    ctaLink: {
+        type: ControlType.Link,
+        defaultValue: "",
+        title: "CTA Link",
+    },
+    showCta: {
+        type: ControlType.Boolean,
+        defaultValue: true,
+        title: "Show CTA",
+    },
+    accent: {
+        type: ControlType.Color,
+        defaultValue: "#E86A92",
+        title: "Accent",
+    },
+    surface: {
+        type: ControlType.Color,
+        defaultValue: "#FFFBF7",
+        title: "Surface",
+    },
+    pageText: {
+        type: ControlType.Color,
+        defaultValue: "#2B2438",
+        title: "Text",
+    },
+    mutedText: {
+        type: ControlType.Color,
+        defaultValue: "#8C8199",
+        title: "Muted",
+    },
+    panelFill: {
+        type: ControlType.Color,
+        defaultValue: "#FFFFFF",
+        title: "Panels",
+    },
+    borderColor: {
+        type: ControlType.Color,
+        defaultValue: "#EFE3DA",
+        title: "Borders",
+    },
+    cornerRadius: {
+        type: ControlType.Number,
+        defaultValue: 14,
+        min: 0,
+        max: 48,
+        title: "Radius",
+    },
+    fontFamily: {
+        type: ControlType.Font,
+        title: "Font",
+        controls: "extended",
+        defaultFontType: "sans-serif",
+        defaultValue: {
+            fontSize: "15px",
+            lineHeight: "1.3em",
+            letterSpacing: "-0.01em",
+            variant: "Medium",
+        },
+    },
+})

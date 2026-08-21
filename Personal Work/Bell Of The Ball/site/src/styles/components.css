@@ -43,7 +43,16 @@
   padding: 2rem 0;
   z-index: 100;
   background-color: var(--color-parchment);
+  /* Vertical rotated labels make this rail's height a function of how many
+     characters the nav holds, not how many items. Five entries overflow a
+     short laptop viewport at the original 3rem gap, which pushed CONTACT
+     off-screen entirely — hence the tightened gaps below and this scroll
+     fallback, which keeps every link reachable at any height. */
+  overflow-y: auto;
+  scrollbar-width: none;
 }
+
+.sidebar-nav::-webkit-scrollbar { display: none; }
 
 .sidebar-nav .logo {
   writing-mode: vertical-rl;
@@ -58,8 +67,14 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 1.75rem;
   align-items: center;
+}
+
+/* Short viewports (a 13" laptop lands near 700px) tighten further. */
+@media (max-height: 780px) {
+  .nav-links { gap: 1rem; }
+  .sidebar-nav { padding: 1.25rem 0; }
 }
 
 .nav-links li {
@@ -240,6 +255,12 @@
 .shape-10 { clip-path: polygon(0 10%, 100% 0, 90% 90%, 10% 100%); }
 .shape-11 { clip-path: polygon(0 0, 95% 8%, 100% 100%, 8% 92%); }
 .shape-12 { clip-path: polygon(8% 0, 100% 6%, 92% 100%, 0 94%); }
+.shape-13 { clip-path: polygon(0 0, 100% 3%, 97% 100%, 3% 97%); }
+.shape-14 { clip-path: polygon(3% 0, 100% 0, 100% 97%, 0 100%); }
+.shape-15 { clip-path: polygon(0 3%, 97% 0, 100% 100%, 3% 97%); }
+.shape-16 { clip-path: polygon(0 0, 97% 3%, 100% 97%, 3% 100%); }
+.shape-17 { clip-path: polygon(0 6%, 100% 0, 94% 100%, 6% 94%); }
+.shape-18 { clip-path: polygon(6% 0, 100% 6%, 100% 100%, 0 94%); }
 
 /* About Section */
 .about {
@@ -379,6 +400,33 @@
 .service-rentals .centered-text p { color: var(--color-parchment); }
 .service-rentals .service-num { color: var(--color-ochre-rust); }
 
+/* Notary — the one service with no photography of its own. Rather than pad it
+   with a stock image or borrow another service's shot, it runs as a text-only
+   ledger row: hairline rules top and bottom, heading left, copy right. The
+   break in rhythm reads as deliberate, and it drops straight into the
+   alternating media pattern without competing with the rentals banner. */
+.service-notary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 4rem;
+  align-items: start;
+  padding: 4rem 0;
+  margin-bottom: 8rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-bottle-green) 20%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-bottle-green) 20%, transparent);
+}
+
+.service-notary .service-text h3 { font-size: clamp(2rem, 4vw, 3rem); }
+
+@media (max-width: 1024px) {
+  .service-notary {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: left;
+    margin-bottom: 6rem;
+  }
+}
+
 /* Portfolio Section */
 .portfolio {
   padding: 10rem 4rem;
@@ -465,6 +513,740 @@
 
 .footer-links a:hover { color: var(--color-bottle-green); }
 
+/* ==========================================================================
+   Ledger Panel — flat surface primitive
+   Shared by the FAQ cards, testimonial cards, and the estimator's panes.
+   Flat by default: hairline bottle-green-tinted border, zero radius, zero
+   shadow. Silhouette comes from a .shape-* facet applied alongside.
+   ========================================================================== */
+.ledger-panel {
+  background-color: var(--color-paper-white);
+  border: 1px solid color-mix(in srgb, var(--color-bottle-green) 12%, transparent);
+  padding: 2rem;
+}
+
+/* Facet + border can't coexist (clip-path crops the border), so faceted
+   panels drop the border and lean on the fill contrast instead. */
+.ledger-panel.is-faceted { border: none; }
+
+/* Shared focus treatment — square, ochre, offset. No radius. */
+.ledger-panel :focus-visible,
+.pricing-estimator :focus-visible,
+.faq-section :focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: 3px;
+}
+
+/* Placeholder disclaimer banner — removed once real content lands. */
+.placeholder-banner {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  color: var(--color-bottle-green);
+  background-color: color-mix(in srgb, var(--color-bottle-green) 8%, transparent);
+  border-left: 3px solid var(--color-bottle-green);
+  padding: 1rem 1.25rem;
+  margin-bottom: 3rem;
+  max-width: 720px;
+}
+
+/* ==========================================================================
+   About — Team portraits
+   ========================================================================== */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3rem;
+  max-width: 720px;
+}
+
+.team-portrait {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+  background-color: var(--color-bottle-green);
+  margin-bottom: 1.25rem;
+  transition: clip-path var(--transition-slow);
+}
+
+.team-name {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1.2;
+  color: var(--color-warm-ink);
+  margin-bottom: 0.35rem;
+}
+
+.team-role { display: block; }
+
+/* ==========================================================================
+   Testimonials — CSS marquee columns
+   Each track holds the list twice; translating -50% lands exactly one set
+   later, so the loop is seamless. The trailing padding-bottom must equal the
+   gap for that maths to hold — don't change one without the other.
+   ========================================================================== */
+.testimonials {
+  padding: 10rem 4rem;
+  background-color: var(--color-parchment);
+  overflow: hidden;
+}
+
+.testimonials-container { max-width: 1200px; margin: 0 auto; }
+
+.testimonials-head {
+  max-width: 620px;
+  margin-bottom: 5rem;
+}
+
+.testimonials-head h2 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1.1;
+  margin: 1rem 0 1.5rem;
+}
+
+.testimonials-head p {
+  color: var(--color-warm-taupe);
+  font-size: 1.1rem;
+  max-width: 52ch;
+}
+
+.tm-columns {
+  display: flex;
+  gap: 2rem;
+  max-height: 680px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+}
+
+.tm-column { flex: 1 1 0; min-width: 0; }
+
+.tm-track {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 2rem; /* must match gap — see note above */
+  animation: tm-scroll var(--tm-duration, 40s) linear infinite;
+  will-change: transform;
+}
+
+@keyframes tm-scroll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+.tm-columns:hover .tm-track { animation-play-state: paused; }
+
+.tm-card { padding: 2rem; }
+
+.tm-quote {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--color-warm-ink);
+}
+
+.tm-attrib {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+/* Monogram stands in for a photograph. The original component pulled stock
+   faces from randomuser.me; inventing client likenesses is off-limits here. */
+.tm-monogram {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background-color: var(--color-bottle-green);
+  color: var(--color-paper-white);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  clip-path: polygon(12% 0, 100% 8%, 88% 100%, 0 92%);
+}
+
+.tm-avatar {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  background-color: var(--color-bottle-green);
+  clip-path: polygon(12% 0, 100% 8%, 88% 100%, 0 92%);
+}
+
+.tm-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.3;
+  color: var(--color-warm-ink);
+}
+
+/* ==========================================================================
+   FAQ
+   ========================================================================== */
+.faq-section {
+  padding: 10rem 4rem;
+  background-color: var(--color-paper-white);
+}
+
+.faq-container { max-width: 1100px; margin: 0 auto; }
+
+.faq-head { margin-bottom: 4rem; }
+
+.faq-head h2 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1.1;
+  margin: 1rem 0 1.5rem;
+}
+
+.faq-head p {
+  color: var(--color-warm-taupe);
+  font-size: 1.1rem;
+  max-width: 52ch;
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.faq-item {
+  background-color: var(--color-parchment);
+  padding: 2rem 2.25rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: baseline;
+}
+
+.faq-num { flex: 0 0 auto; }
+
+.faq-q {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-warm-ink);
+  margin-bottom: 0.75rem;
+}
+
+.faq-a {
+  color: var(--color-warm-taupe);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.faq-todo {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-paper-white);
+  background-color: var(--color-bottle-green);
+  padding: 0.25rem 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.faq-footnote {
+  margin-top: 3rem;
+  color: var(--color-warm-taupe);
+  font-size: 1rem;
+}
+
+.faq-footnote a {
+  color: var(--color-ochre-rust);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+/* ==========================================================================
+   Pricing Estimator (React island)
+   Ported from the Framer DynamicPricing component: every rounded corner became
+   a facet, every shadow was dropped, and the pink accent resolved to ochre.
+   ========================================================================== */
+.pricing-estimator {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1100px;
+}
+
+.pe-field { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.pe-select-wrap { position: relative; }
+
+.pe-select {
+  width: 100%;
+  background-color: var(--color-paper-white);
+  border: 1px solid color-mix(in srgb, var(--color-bottle-green) 20%, transparent);
+  color: var(--color-warm-ink);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  text-align: left;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: border-color var(--transition-fast);
+}
+
+.pe-select:hover { border-color: color-mix(in srgb, var(--color-bottle-green) 45%, transparent); }
+
+.pe-select[aria-expanded='true'] { border-color: var(--color-bottle-green); }
+
+.pe-select-caret {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--color-warm-taupe);
+}
+
+.pe-listbox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% - 1px);
+  z-index: 10;
+  background-color: var(--color-paper-white);
+  border: 1px solid var(--color-bottle-green);
+  padding: 0.5rem;
+  display: grid;
+  gap: 0.25rem;
+  animation: pe-drop 0.24s var(--ease-organic);
+  transform-origin: top center;
+}
+
+@keyframes pe-drop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pe-option {
+  border: none;
+  background: transparent;
+  color: var(--color-warm-ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.pe-option:hover,
+.pe-option.is-active {
+  background-color: color-mix(in srgb, var(--color-bottle-green) 10%, transparent);
+}
+
+.pe-option[aria-selected='true'] {
+  background-color: var(--color-bottle-green);
+  color: var(--color-paper-white);
+}
+
+.pe-body {
+  display: flex;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.pe-pane {
+  background-color: var(--color-paper-white);
+  border: 1px solid color-mix(in srgb, var(--color-bottle-green) 12%, transparent);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.pe-pane-addons { flex: 0 0 44%; }
+
+.pe-pane-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pe-empty {
+  color: var(--color-warm-taupe);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.pe-addons { display: grid; gap: 0.75rem; }
+
+.pe-addon {
+  font-family: var(--font-body);
+  background-color: var(--color-parchment);
+  border: 1px solid transparent;
+  color: var(--color-warm-ink);
+  font-size: 1rem;
+  padding: 0.9rem 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  text-align: left;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  animation: pe-rise 0.32s var(--ease-organic) backwards;
+  animation-delay: var(--pe-delay, 0s);
+}
+
+@keyframes pe-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pe-addon:hover { border-color: color-mix(in srgb, var(--color-bottle-green) 30%, transparent); }
+
+.pe-addon[aria-checked='true'] {
+  border-color: var(--color-ochre-rust);
+  background-color: color-mix(in srgb, var(--color-ochre-rust) 8%, var(--color-parchment));
+}
+
+.pe-addon-label { display: inline-flex; align-items: center; gap: 0.85rem; }
+
+/* Faceted checkbox — the system has no rounded corners, so no rounded box. */
+.pe-check {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--color-bottle-green) 35%, transparent);
+  background-color: var(--color-paper-white);
+  color: var(--color-paper-white);
+  font-size: 0.7rem;
+  line-height: 1;
+  clip-path: polygon(14% 0, 100% 10%, 86% 100%, 0 90%);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.pe-addon[aria-checked='true'] .pe-check {
+  background-color: var(--color-ochre-rust);
+  border-color: var(--color-ochre-rust);
+}
+
+.pe-price {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-warm-taupe);
+  flex: 0 0 auto;
+}
+
+/* "Varies" reads as a state, not a number — italic serif rather than the
+   tabular figures, so it never gets mistaken for a price at a glance. */
+.pe-varies {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-variant-numeric: normal;
+  color: var(--color-warm-taupe);
+}
+
+.pe-unit {
+  font-size: 0.8rem;
+  color: var(--color-warm-taupe);
+  font-variant-numeric: normal;
+}
+
+.pe-addon-note {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--color-warm-taupe);
+  margin-top: 0.2rem;
+}
+
+/* The base price is a floor, so "From" is set quieter than the figure it
+   qualifies rather than competing with it. */
+.pe-from {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 0.7rem;
+  vertical-align: middle;
+  margin-right: 0.4rem;
+  color: color-mix(in srgb, var(--color-paper-white) 65%, transparent);
+}
+
+.pe-lines { display: grid; gap: 0.75rem; }
+
+.pe-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  animation: pe-rise 0.32s var(--ease-organic) backwards;
+}
+
+.pe-line-label { color: var(--color-warm-ink); }
+
+.pe-line-sub {
+  display: block;
+  color: var(--color-warm-taupe);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.pe-line-value {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--color-warm-ink);
+  flex: 0 0 auto;
+}
+
+.pe-total {
+  background-color: var(--color-bottle-green);
+  padding: 1.75rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.pe-total .label-text { color: color-mix(in srgb, var(--color-paper-white) 65%, transparent); }
+
+/* Caslon, not a bold sans — the figure is a headline, not a dashboard stat. */
+.pe-total-figure {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.75rem, 5vw, 4rem);
+  line-height: 1;
+  color: var(--color-paper-white);
+  font-variant-numeric: tabular-nums;
+}
+
+.pe-total-note {
+  color: color-mix(in srgb, var(--color-paper-white) 65%, transparent);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* The estimator is a flex column, so a stretched CTA would run the full 1100px
+   and the shared 10% facet would slice straight through the label. Size it to
+   its own content instead. */
+.pricing-estimator .cta-btn {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+}
+
+/* ==========================================================================
+   Portfolio grid + lightbox
+   ========================================================================== */
+.pf-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin-bottom: 4rem;
+}
+
+.pf-filter {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.pf-filter:hover { color: var(--color-warm-ink); }
+.pf-filter[aria-pressed='true'] { color: var(--color-ochre-rust); }
+
+.pf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 3rem 2rem;
+}
+
+.pf-tile {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  font: inherit;
+  color: inherit;
+}
+
+.pf-tile-media {
+  display: block;
+  overflow: hidden;
+  background-color: var(--color-bottle-green);
+  transition: clip-path var(--transition-slow);
+}
+
+.pf-tile-media img {
+  display: block;
+  width: 100%;
+  height: 42vh;
+  min-height: 260px;
+  object-fit: cover;
+  /* Depth by movement, never a shadow. */
+  transition: transform var(--transition-slow);
+}
+
+.pf-tile:hover .pf-tile-media img,
+.pf-tile:focus-visible .pf-tile-media img { transform: scale(1.04); }
+
+.pf-tile:focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: 4px;
+}
+
+.pf-tile-meta {
+  display: block;
+  margin-top: 1rem;
+}
+
+.pf-tile-title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--color-warm-ink);
+  margin-bottom: 0.35rem;
+  transition: color var(--transition-fast);
+}
+
+.pf-tile:hover .pf-tile-title { color: var(--color-ochre-rust); }
+
+/* --- Lightbox --- */
+.pf-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background-color: color-mix(in srgb, var(--color-warm-ink) 88%, transparent);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4rem 2rem;
+  overflow-y: auto;
+  animation: pf-fade 0.32s var(--ease-organic);
+}
+
+@keyframes pf-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.pf-panel {
+  position: relative;
+  width: min(1100px, 100%);
+  background-color: var(--color-parchment);
+  padding: 3.5rem;
+  animation: pf-rise 0.4s var(--ease-organic);
+}
+
+@keyframes pf-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pf-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 0.75rem;
+  color: var(--color-warm-taupe);
+  padding: 0.5rem;
+  transition: color var(--transition-fast);
+}
+
+.pf-close:hover { color: var(--color-ochre-rust); }
+
+.pf-close:focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: 3px;
+}
+
+.pf-panel-head {
+  max-width: 60ch;
+  margin-bottom: 3rem;
+}
+
+.pf-panel-title {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.1;
+  margin: 1rem 0 1.25rem;
+}
+
+.pf-panel-desc {
+  color: var(--color-warm-taupe);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.pf-panel-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.pf-photo { overflow: hidden; background-color: var(--color-bottle-green); }
+
+.pf-photo img {
+  display: block;
+  width: 100%;
+  height: 46vh;
+  min-height: 280px;
+  object-fit: cover;
+}
+
+/* A lone cover shouldn't stretch to fill the whole panel width. */
+.pf-panel-photos:has(> .pf-photo:only-child) { grid-template-columns: minmax(0, 620px); }
+
+.pf-panel-note {
+  margin-top: 2rem;
+  color: var(--color-warm-taupe);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .pf-overlay { padding: 0; }
+  .pf-panel { padding: 4.5rem 1.5rem 3rem; min-height: 100%; }
+  .pf-grid { gap: 2.5rem 1.5rem; }
+  .pf-tile-media img { height: 34vh; }
+  .pf-photo img { height: 32vh; min-height: 200px; }
+}
+
+/* ==========================================================================
+   Motion preferences
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .tm-track { animation: none; }
+  .tm-columns {
+    max-height: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .pe-addon,
+  .pe-line,
+  .pe-listbox,
+  .pf-overlay,
+  .pf-panel { animation: none; }
+  .pf-tile:hover .pf-tile-media img { transform: none; }
+  .reveal, .reveal-up, .reveal-right {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .about-grid { grid-template-columns: 1fr; }
@@ -480,6 +1262,10 @@
   .portfolio-grid { display: flex; flex-direction: column; gap: 4rem; }
   .portfolio-item { margin-top: 0 !important; width: 100%; }
   .p-media { height: 50vh !important; }
+
+  .pe-body { flex-direction: column; }
+  .pe-pane-addons { flex: 0 0 auto; }
+  .faq-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
@@ -500,4 +1286,10 @@
   .footer { padding: 2rem 1.5rem; }
   .footer-content { flex-direction: column; gap: 1rem; text-align: center; }
   .footer-links a { margin: 0 1rem; }
+
+  .testimonials, .faq-section { padding: 4rem 1.5rem; }
+  .testimonials-head, .faq-head { margin-bottom: 3rem; }
+  .tm-columns { max-height: 520px; }
+  .team-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .faq-item { padding: 1.5rem; gap: 1rem; flex-direction: column; }
 }
