@@ -26,11 +26,6 @@
  *   - table-4x3-01.jpg — a celebration-of-life table bearing a deceased
  *     person's photograph.
  *   - table-16x9-01.jpg — shows a real couple's full names and wedding date.
- *
- * REVIEW BEFORE LAUNCH: grand-opening-orange-arch.jpg has a guest visible in
- * frame holding a balloon. They're small and turned away, but it's the only
- * served photo with an identifiable person who isn't staff — worth confirming
- * the client has their okay.
  */
 import fs from 'node:fs';
 import path from 'node:path';

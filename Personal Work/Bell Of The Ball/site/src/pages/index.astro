@@ -3,10 +3,70 @@ import Layout from '../layouts/Layout.astro';
 import CTAButton from '../components/CTAButton.astro';
 import TestimonialColumns from '../components/TestimonialColumns.astro';
 import { loadRentals } from '../data/rentals';
+import { loadPortfolio } from '../data/portfolio';
 
 // Read at build time from public/photos/rentals/. Empty until photos land,
 // and the strip below simply doesn't render.
 const rentals = loadRentals();
+
+/*
+ * Every photograph on this page opens a lightbox, and almost none of them
+ * opens alone.
+ *
+ * The archive is read from the folder tree (src/data/portfolio.ts), and the
+ * hero, about, and services photographs are the same files those event folders
+ * name as covers or includes. So rather than hand-writing a caption per photo,
+ * the page indexes the archive by image path: click the church arch in the hero
+ * and the lightbox opens the whole Ceremony Arches event on that frame, with a
+ * link through to its archive entry. Nothing here needs editing when a photo
+ * moves between events — the index follows event.json.
+ */
+const { events } = loadPortfolio();
+
+const ownerOf = new Map<string, (typeof events)[number]>();
+for (const event of events) {
+  for (const photo of [event.cover, ...event.photos]) {
+    if (!ownerOf.has(photo.src)) ownerOf.set(photo.src, event);
+  }
+}
+
+/** Lightbox payload for a photograph, resolved through the archive if it's in it. */
+function openSet(src: string, alt: string, title: string, meta: string) {
+  const event = ownerOf.get(src);
+  if (!event) {
+    // Not filed under any event — it still opens, just on its own.
+    return JSON.stringify({ title, meta, photos: [{ src, alt }] });
+  }
+  return JSON.stringify({
+    title: event.title,
+    meta: event.category.toUpperCase(),
+    description: event.description,
+    href: `/portfolio#${event.slug}`,
+    hrefLabel: 'Open in the archive',
+    photos: [event.cover, ...event.photos],
+  });
+}
+
+/*
+ * Selected Works used to be four hand-picked files under /photos/featured/ with
+ * typed captions, which meant a tile could name an event the archive had never
+ * heard of — and one did. The teaser now pulls whole events out of the archive
+ * by slug, so a tile is always a real folder: its cover, its photo count, and
+ * every photograph in it behind the click.
+ *
+ * To change what is featured, edit the slugs. To change a tile's photograph or
+ * caption, edit that event's event.json — nothing on this page needs touching.
+ */
+const FEATURED_SLUGS = [
+  'rustic-stone-wedding',
+  'seasonal-retail',
+  'jungle-baby-shower',
+  'ballroom-gala',
+];
+
+const featured = FEATURED_SLUGS.map((slug) => events.find((e) => e.slug === slug)).filter(
+  (event): event is (typeof events)[number] => Boolean(event)
+);
 ---
 
 <Layout title="Bell of the Ball | Premium Event Design">
@@ -14,22 +74,46 @@ const rentals = loadRentals();
   <section class="hero" id="hero">
     <div class="hero-content">
       <h1 class="hero-title parallax-text" data-speed="0.05">BELL OF<br />THE BALL</h1>
-      <p class="hero-tagline reveal">PREMIUM EVENT DESIGN & FULL-SERVICE PLANNING</p>
+      <!--
+        Two lines, doing two jobs. The first says what is sold. The second says
+        where from, because a local search is how most of this traffic arrives
+        and "are they even in my city" is the question it is asking. The radius
+        named here is the one the FAQ commits to (src/data/faq.ts) — Reno and
+        Sparks with no travel charge, Carson City with one, nothing beyond — so
+        the hero cannot promise a drive the company has said it will not make.
+      -->
+      <p class="hero-tagline reveal">
+        PREMIUM EVENT DESIGN &amp; FULL-SERVICE PLANNING<br />
+        <span class="hero-locale">LOCAL TO RENO, NEVADA — SERVING RENO, SPARKS &amp; CARSON CITY</span>
+      </p>
       <CTAButton href="/contact" class="reveal">Book Consultation</CTAButton>
     </div>
     <div class="hero-media-wrapper reveal-right">
-      <img
-        class="hero-media shape-1"
-        src="/photos/hero/church-garland-arch.jpg"
-        alt="A sage-green, gold, and white organic balloon garland arcing over a wooden cross at a stone-walled venue"
-      />
+      <button
+        type="button"
+        class="px-open hero-media"
+        data-lightbox={openSet(
+          '/photos/hero/church-garland-arch.jpg',
+          'A sage-green, gold, and white organic balloon garland arcing over a wooden cross at a stone-walled venue',
+          'Ceremony Arches',
+          'WEDDINGS'
+        )}
+        data-lightbox-start="/photos/hero/church-garland-arch.jpg"
+      >
+        <span class="px-frame shape-1" data-parallax="0.55">
+          <img
+            src="/photos/hero/church-garland-arch.jpg"
+            alt="A sage-green, gold, and white organic balloon garland arcing over a wooden cross at a stone-walled venue"
+          />
+        </span>
+      </button>
     </div>
   </section>
 
   <!-- About Section -->
   <section class="about" id="about">
     <div class="about-container">
-      <span class="section-label reveal">01. HERITAGE & SCOPE</span>
+      <span class="section-label reveal">01. HERITAGE &amp; SCOPE</span>
       <div class="about-grid">
         <div class="about-text">
           <h2 class="reveal">Elevating the Art of Celebration</h2>
@@ -45,16 +129,42 @@ const rentals = loadRentals();
           <CTAButton href="/about" variant="secondary" class="reveal">Our Story</CTAButton>
         </div>
         <div class="about-media-blocks">
-          <img
-            class="media-block block-left shape-2 reveal-up"
-            src="/photos/about/wildflower-centerpiece.jpg"
-            alt="Wildflowers in glass bottles on a wood-slice centerpiece, table number three"
-          />
-          <img
-            class="media-block block-right shape-3 reveal-up delay-1"
-            src="/photos/about/rental-charger-detail.jpg"
-            alt="Gold-scroll charger plate with a navy napkin and gold flatware, place setting detail"
-          />
+          <button
+            type="button"
+            class="px-open media-block block-left reveal-up"
+            data-lightbox={openSet(
+              '/photos/about/wildflower-centerpiece.jpg',
+              'Wildflowers in glass bottles on a wood-slice centerpiece, table number three',
+              'Rustic Stone Venue',
+              'WEDDINGS'
+            )}
+            data-lightbox-start="/photos/about/wildflower-centerpiece.jpg"
+          >
+            <span class="px-frame shape-2" data-parallax="1.1">
+              <img
+                src="/photos/about/wildflower-centerpiece.jpg"
+                alt="Wildflowers in glass bottles on a wood-slice centerpiece, table number three"
+              />
+            </span>
+          </button>
+          <button
+            type="button"
+            class="px-open media-block block-right reveal-up delay-1"
+            data-lightbox={openSet(
+              '/photos/about/rental-charger-detail.jpg',
+              'Gold-scroll charger plate with a navy napkin and gold flatware, place setting detail',
+              'Formal Place Settings',
+              'RENTALS & PRODUCTS'
+            )}
+            data-lightbox-start="/photos/about/rental-charger-detail.jpg"
+          >
+            <span class="px-frame shape-3" data-parallax="0.7">
+              <img
+                src="/photos/about/rental-charger-detail.jpg"
+                alt="Gold-scroll charger plate with a navy napkin and gold flatware, place setting detail"
+              />
+            </span>
+          </button>
         </div>
       </div>
     </div>
@@ -68,25 +178,51 @@ const rentals = loadRentals();
       <div class="service-item service-design reveal">
         <div class="service-text">
           <span class="service-num">01</span>
-          <h3>Event Design & Planning</h3>
+          <h3>Event Design &amp; Planning</h3>
           <p>
             A holistic approach to celebration. We sculpt space, light, and texture to reflect your unique narrative.
             Comprehensive logistics meet unbridled creativity in our full-service planning.
           </p>
         </div>
-        <img
-          class="service-media shape-4"
-          src="/photos/services/event-design-bridal-table.jpg"
-          alt="A long wooden bridal table dressed with a navy and blue floral garland runner, candles, and gold-rimmed place settings"
-        />
+        <button
+          type="button"
+          class="px-open service-media"
+          data-lightbox={openSet(
+            '/photos/services/event-design-bridal-table.jpg',
+            'A long wooden bridal table dressed with a navy and blue floral garland runner, candles, and gold-rimmed place settings',
+            'Blue-Based Receptions',
+            'WEDDINGS'
+          )}
+          data-lightbox-start="/photos/services/event-design-bridal-table.jpg"
+        >
+          <span class="px-frame shape-4" data-parallax="0.8">
+            <img
+              src="/photos/services/event-design-bridal-table.jpg"
+              alt="A long wooden bridal table dressed with a navy and blue floral garland runner, candles, and gold-rimmed place settings"
+            />
+          </span>
+        </button>
       </div>
 
       <div class="service-item service-officiating reveal">
-        <img
-          class="service-media shape-5"
-          src="/photos/services/officiating-ceremony-arch.jpg"
-          alt="A wooden circular ceremony arch with sheer draping and oversized poppy flowers, set against a stone building and pine forest"
-        />
+        <button
+          type="button"
+          class="px-open service-media"
+          data-lightbox={openSet(
+            '/photos/services/officiating-ceremony-arch.jpg',
+            'A wooden circular ceremony arch with sheer draping and oversized poppy flowers, set against a stone building and pine forest',
+            'Ceremony Arches',
+            'WEDDINGS'
+          )}
+          data-lightbox-start="/photos/services/officiating-ceremony-arch.jpg"
+        >
+          <span class="px-frame shape-5" data-parallax="0.8">
+            <img
+              src="/photos/services/officiating-ceremony-arch.jpg"
+              alt="A wooden circular ceremony arch with sheer draping and oversized poppy flowers, set against a stone building and pine forest"
+            />
+          </span>
+        </button>
         <div class="service-text">
           <span class="service-num">02</span>
           <h3>Professional Officiating</h3>
@@ -104,9 +240,9 @@ const rentals = loadRentals();
         </div>
         <div class="service-text">
           <p>
-            A commissioned notary on the same team that plans your event. Marriage licenses, affidavits, and the
-            paperwork that tends to surface the week of — handled without sending you to find a third party at short
-            notice.
+            A commissioned notary on the same team that plans your event. Affidavits, consent forms, and the
+            paperwork that tends to surface the week of — notarized without sending you to find a third party at
+            short notice.
           </p>
         </div>
       </div>
@@ -120,11 +256,24 @@ const rentals = loadRentals();
             architecture and cascade through spaces in breathtaking asymmetry.
           </p>
         </div>
-        <img
-          class="service-media shape-6"
-          src="/photos/services/balloons-purple-wisteria.jpg"
-          alt="A purple and lavender organic balloon garland with wisteria accents arcing over a wooden cross at a stone-walled venue"
-        />
+        <button
+          type="button"
+          class="px-open service-media"
+          data-lightbox={openSet(
+            '/photos/services/balloons-purple-wisteria.jpg',
+            'A purple and lavender organic balloon garland with wisteria accents arcing over a wooden cross at a stone-walled venue',
+            'Ceremony Arches',
+            'WEDDINGS'
+          )}
+          data-lightbox-start="/photos/services/balloons-purple-wisteria.jpg"
+        >
+          <span class="px-frame shape-6" data-parallax="0.9">
+            <img
+              src="/photos/services/balloons-purple-wisteria.jpg"
+              alt="A purple and lavender organic balloon garland with wisteria accents arcing over a wooden cross at a stone-walled venue"
+            />
+          </span>
+        </button>
       </div>
 
       <div class="service-item service-rentals reveal">
@@ -140,7 +289,21 @@ const rentals = loadRentals();
         <ul class="rental-strip reveal">
           {rentals.map((machine) => (
             <li class="rental-card">
-              <img src={machine.src} alt={machine.alt} loading="lazy" />
+              <button
+                type="button"
+                class="px-open"
+                data-lightbox={JSON.stringify({
+                  title: machine.name,
+                  meta: 'CONCESSION RENTALS',
+                  href: '/services',
+                  hrefLabel: 'See what comes with it',
+                  photos: [{ src: machine.src, alt: machine.alt }],
+                })}
+              >
+                <span class="px-frame" data-parallax="0.5">
+                  <img src={machine.src} alt={machine.alt} loading="lazy" />
+                </span>
+              </button>
               <span class="label-text rental-name">{machine.name}</span>
             </li>
           ))}
@@ -154,39 +317,38 @@ const rentals = loadRentals();
     <div class="portfolio-container">
       <span class="section-label reveal">03. ARCHIVE</span>
       <h2 class="portfolio-title reveal">Selected Works</h2>
+      <p class="portfolio-lead reveal">
+        Four events out of the archive. Open one and you get the whole set — every photograph from that build, in
+        order, without leaving this page.
+      </p>
       <div class="portfolio-grid">
-        <div class="portfolio-item p-item-1 reveal-up">
-          <img
-            class="p-media shape-7"
-            src="/photos/featured/mr-and-mrs-tablescape.jpg"
-            alt="A rustic wedding place setting with a wood charger, sage tablecloth, and a gold Mr. and Mrs. sign against a stone wall"
-          />
-          <span class="p-caption">RUSTIC WEDDING</span>
-        </div>
-        <div class="portfolio-item p-item-2 reveal-up delay-1">
-          <img
-            class="p-media shape-8"
-            src="/photos/featured/winter-snowflake-arch.jpg"
-            alt="A blue and silver balloon arch with star and snowflake accents inside a boutique interior"
-          />
-          <span class="p-caption">WINTER LAUNCH</span>
-        </div>
-        <div class="portfolio-item p-item-3 reveal-up delay-2">
-          <img
-            class="p-media shape-9"
-            src="/photos/featured/jungle-baby-shower-garland.jpg"
-            alt="A sage green and gold balloon garland framing a jungle-themed baby shower backdrop reading A Little King is on His Way"
-          />
-          <span class="p-caption">BABY SHOWER</span>
-        </div>
-        <div class="portfolio-item p-item-4 reveal-up delay-1">
-          <img
-            class="p-media shape-10"
-            src="/photos/featured/gala-ballroom-tablescape.jpg"
-            alt="A black, gold, and purple place setting at a formal ballroom gala table"
-          />
-          <span class="p-caption">CORPORATE GALA</span>
-        </div>
+        {featured.map((event, i) => (
+          <div class={`portfolio-item p-item-${i + 1} reveal-up${i === 1 ? ' delay-1' : ''}${i === 2 ? ' delay-2' : ''}${i === 3 ? ' delay-1' : ''}`}>
+            <button
+              type="button"
+              class="px-open p-media"
+              data-lightbox={JSON.stringify({
+                title: event.title,
+                meta: event.category.toUpperCase(),
+                description: event.description,
+                href: `/portfolio#${event.slug}`,
+                hrefLabel: 'Open in the archive',
+                photos: [event.cover, ...event.photos],
+              })}
+            >
+              <span class={`px-frame shape-${7 + i}`} data-parallax={[0.9, 1.25, 0.7, 1.05][i]}>
+                <img src={event.cover.src} alt={event.cover.alt} loading="lazy" />
+              </span>
+            </button>
+            <span class="p-caption">
+              {event.title.toUpperCase()}
+              <span class="p-count">
+                {event.photos.length + 1} photographs
+                <span class="p-open" aria-hidden="true">Open ↗</span>
+              </span>
+            </span>
+          </div>
+        ))}
       </div>
       <div class="mt-24 text-center">
         <CTAButton href="/portfolio" variant="secondary">View Full Archive</CTAButton>

@@ -1,14 +1,29 @@
 @import "tailwindcss";
 @import "./components.css";
 
-/* Tokens sourced from /DESIGN.md — Botanical Ledger. Keep these two files in sync. */
+/*
+ * Tokens sourced from /DESIGN.md — Botanical Ledger. Keep these two files in sync.
+ *
+ * Two of them were nudged darker for contrast, hue and saturation held so the
+ * palette reads identically:
+ *
+ *   ochre-rust  #a8672a -> #945a25   was 3.65:1 on parchment (needs 4.5:1),
+ *                                    and 4.19:1 as a button ground under
+ *                                    paper-white text. Now 4.52 and 5.19.
+ *   warm-taupe  #7a6748 -> #786547   was 4.38:1 on parchment. Now 4.51.
+ *
+ * Ochre carries every section label, the hero's locale line, the CTA buttons
+ * and the estimator's accents, so at the old value most of the site's small
+ * text failed WCAG AA. The change is roughly a 3% lightness step and is not
+ * visible side by side.
+ */
 @theme {
   --color-bottle-green: #1f3d2e;
-  --color-ochre-rust: #a8672a;
+  --color-ochre-rust: #945a25;
   --color-parchment: #efe6d3;
   --color-paper-white: #faf6ec;
   --color-warm-ink: #221d15;
-  --color-warm-taupe: #7a6748;
+  --color-warm-taupe: #786547;
 
   --font-display: "Libre Caslon Display", Georgia, serif;
   --font-mono: "Fragment Mono", ui-monospace, monospace;
@@ -43,18 +58,28 @@
   }
 }
 
-/* Reveal-on-scroll, ported from the v3/b comp's main.js */
+/*
+ * Reveal-on-scroll, ported from the v3/b comp's main.js.
+ *
+ * Every rule below composes on top of --rest-transform rather than setting
+ * `transform` outright. An element that is positioned by a transform — the hero
+ * photograph is centred with translateY(-50%) — otherwise loses that
+ * positioning the moment it is also a reveal target, because the two rules
+ * carry the same specificity and the reveal is declared last. That is what was
+ * dropping the hero photograph half a viewport down the page. Anything with no
+ * transform of its own resolves the fallback and behaves exactly as before.
+ */
 .reveal, .reveal-up, .reveal-right {
   opacity: 0;
   will-change: transform, opacity;
   transition: all 1s var(--ease-organic);
 }
-.reveal { transform: translateY(30px); }
-.reveal-up { transform: translateY(60px); }
-.reveal-right { transform: translateX(40px); }
+.reveal { transform: var(--rest-transform, translate(0, 0)) translateY(30px); }
+.reveal-up { transform: var(--rest-transform, translate(0, 0)) translateY(60px); }
+.reveal-right { transform: var(--rest-transform, translate(0, 0)) translateX(40px); }
 .reveal.active, .reveal-up.active, .reveal-right.active {
   opacity: 1;
-  transform: translate(0, 0);
+  transform: var(--rest-transform, translate(0, 0));
 }
 .delay-1 { transition-delay: 0.2s; }
 .delay-2 { transition-delay: 0.4s; }

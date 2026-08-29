@@ -1,21 +1,60 @@
 ---
-import { SITE_SLOGAN } from '../data/site';
+/*
+ * The footer carries the two things a visitor looks down here for: how to reach
+ * the company, and what it will and won't take on.
+ *
+ * The FAQ is the second of those and it lives at the bottom of /pricing, which
+ * means the people who most need it — someone weighing whether their date, their
+ * venue, or their budget is even in scope — had to guess it existed. Naming it
+ * here, on every page, with the scope questions spelled out beside it, is the
+ * cheapest fix: the answer to "do you travel to Tahoe" and "do you do teardown"
+ * is one click from anywhere on the site.
+ */
+import { SITE_SLOGAN, CONTACT_EMAIL, CONTACT_PHONE } from '../data/site';
+import { FAQ_ITEMS } from '../data/faq';
 
 const year = new Date().getFullYear();
-// TODO(client): replace with the real inbox — no business email is confirmed yet.
-const CONTACT_EMAIL = 'hello@belloftheball.example';
+
+/*
+ * The footer used to carry a Pinterest link pointing at "#", which is a dead
+ * link on every page of the site. The client has no Pinterest, so the slot goes
+ * to the phone number instead — a footer is where people look for a way to
+ * reach someone, and a number is worth more there than a social profile.
+ *
+ * It renders only once CONTACT_PHONE is filled in, so the site never ships a
+ * "Call" link that goes nowhere. Set it in src/data/site.ts.
+ */
+const telHref = `tel:${CONTACT_PHONE.replace(/[^+\d]/g, '')}`;
+
+// Counted rather than typed, so the number can't drift from src/data/faq.ts.
+const answerCount = FAQ_ITEMS.filter((item) => item.status === 'confirmed').length;
 ---
 
 <footer class="footer">
+  <div class="footer-faq">
+    <div class="footer-faq-text">
+      <span class="label-text footer-faq-label">Before you enquire</span>
+      <p class="footer-faq-lead">
+        {answerCount} answers on deposits, lead times, how far we travel, what the base price covers, and the
+        things we don't take on.
+      </p>
+    </div>
+    <a class="footer-faq-link" href="/pricing#faq">
+      Read the FAQs <span aria-hidden="true">→</span>
+    </a>
+  </div>
+
   <div class="footer-content">
     <p class="footer-brand">
       <span class="footer-slogan">{SITE_SLOGAN}</span>
       <span>&copy; {year} Bell of the Ball. All rights reserved.</span>
     </p>
     <div class="footer-links">
+      <a href="/pricing#faq">FAQs</a>
+      <a href="/privacy">Privacy</a>
       <a href="https://www.facebook.com/profile.php?id=100095562942212" target="_blank" rel="noopener">Facebook</a>
       <a href="https://www.instagram.com/belloftheballinc/" target="_blank" rel="noopener">Instagram</a>
-      <a href="#">Pinterest</a>
+      {CONTACT_PHONE && <a href={telHref}>{CONTACT_PHONE}</a>}
       <a href={`mailto:${CONTACT_EMAIL}`}>Inquiries</a>
     </div>
   </div>

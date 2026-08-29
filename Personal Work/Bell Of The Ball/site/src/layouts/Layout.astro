@@ -87,6 +87,11 @@ const team = [
     />
   </head>
   <body>
+    <!-- Every page puts the rail's five links (and, on mobile, the menu
+         button) ahead of the content, so without this a keyboard user tabs
+         through the whole navigation on every single page load. -->
+    <a class="skip-link" href="#main">Skip to content</a>
+
     <!-- Sidebar Navigation -->
     <nav class="sidebar-nav" aria-label="Primary">
       <div class="nav-item nav-item-logo">
@@ -139,7 +144,7 @@ const team = [
       </ul>
     </div>
 
-    <main class="main-content">
+    <main class="main-content" id="main" tabindex="-1">
       <slot />
       <Footer />
     </main>

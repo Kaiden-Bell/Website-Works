@@ -41,6 +41,20 @@ interface Props {
   ctaHref?: string;
   ctaLabel?: string;
   showPlaceholderNotice?: boolean;
+  /*
+   * Whether the estimator closes on its own "Book Consultation" button.
+   *
+   * On /pricing it does not. A booking CTA directly under the total is an exit
+   * ramp offered at the exact moment a visitor has just produced a number they
+   * have questions about — deposits, lead time, what the base actually covers.
+   * Nearly all of them stopped there, and the fifteen answers written for them
+   * sat several screens below, unread. That page hands the next step to the FAQ
+   * signpost instead and keeps its booking CTA for the bottom of the page,
+   * after the questions have been answered.
+   *
+   * Defaults to true so the estimator still stands alone anywhere else.
+   */
+  showCta?: boolean;
 }
 
 const formatter = new Intl.NumberFormat('en-US');
@@ -57,6 +71,7 @@ export default function PricingEstimator({
   ctaHref = '/contact',
   ctaLabel = 'Book Consultation',
   showPlaceholderNotice = false,
+  showCta = true,
 }: Props) {
   const [isOpen, setOpen] = useState(false);
   const [selectedName, setSelectedName] = useState<string>('');
@@ -365,7 +380,11 @@ export default function PricingEstimator({
         </div>
       </div>
 
-      <a className="cta-btn" href={ctaHref}>{ctaLabel}</a>
+      {showCta && (
+        <a className="cta-btn" href={ctaHref}>
+          {ctaLabel}
+        </a>
+      )}
     </div>
   );
 }

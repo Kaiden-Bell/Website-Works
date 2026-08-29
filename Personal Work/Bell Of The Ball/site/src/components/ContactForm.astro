@@ -8,10 +8,19 @@
  * posts normally and the service shows its own confirmation page.
  *
  * Spam: a honeypot field no human sees. Bots fill every input they find, so a
- * non-empty value means the submission is dropped client-side. Every service
- * above also does its own filtering server-side.
+ * non-empty value means the submission is dropped client-side. The field's
+ * NAME comes from FORM_FIELDS because Formspree and Web3Forms look for
+ * different ones — that name is what makes the honeypot work on the no-JS path
+ * too, where the service has to catch it server-side.
  */
-import { CONTACT_EMAIL, FORM_ACCESS_KEY, FORM_ENDPOINT, FORM_IS_CONFIGURED, FORM_SUBJECT } from '../data/site';
+import {
+  CONTACT_EMAIL,
+  FORM_ACCESS_KEY,
+  FORM_ENDPOINT,
+  FORM_FIELDS,
+  FORM_IS_CONFIGURED,
+  FORM_SUBJECT,
+} from '../data/site';
 import { EVENT_TYPES } from '../data/pricing';
 
 const isDev = import.meta.env.DEV;
@@ -33,25 +42,25 @@ const isDev = import.meta.env.DEV;
   novalidate
 >
   {FORM_ACCESS_KEY && <input type="hidden" name="access_key" value={FORM_ACCESS_KEY} />}
-  <input type="hidden" name="_subject" value={FORM_SUBJECT} />
+  <input type="hidden" name={FORM_FIELDS.subject} value={FORM_SUBJECT} />
 
   {/* Honeypot — hidden from people, irresistible to bots. */}
   <div class="cf-trap" aria-hidden="true">
     <label for="cf-company">Company</label>
-    <input id="cf-company" type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+    <input id="cf-company" type="text" name={FORM_FIELDS.honeypot} tabindex="-1" autocomplete="off" />
   </div>
 
   <div class="cf-row">
     <div class="cf-field">
       <label class="label-text" for="cf-name">Name<span class="cf-req" aria-hidden="true">*</span></label>
-      <input id="cf-name" name="name" type="text" autocomplete="name" required />
-      <p class="cf-error" data-error-for="cf-name" hidden>Please tell us your name.</p>
+      <input id="cf-name" name="name" type="text" autocomplete="name" required aria-describedby="cf-name-error" />
+      <p class="cf-error" id="cf-name-error" data-error-for="cf-name" hidden>Please tell us your name.</p>
     </div>
 
     <div class="cf-field">
       <label class="label-text" for="cf-email">Email<span class="cf-req" aria-hidden="true">*</span></label>
-      <input id="cf-email" name="email" type="email" autocomplete="email" required />
-      <p class="cf-error" data-error-for="cf-email" hidden>Please enter an email we can reply to.</p>
+      <input id="cf-email" name="email" type="email" autocomplete="email" required aria-describedby="cf-email-error" />
+      <p class="cf-error" id="cf-email-error" data-error-for="cf-email" hidden>Please enter an email we can reply to.</p>
     </div>
   </div>
 
@@ -88,9 +97,10 @@ const isDev = import.meta.env.DEV;
       name="message"
       rows="6"
       required
+      aria-describedby="cf-message-error"
       placeholder="Guest count, venue, the look you're after — whatever you have so far."
     ></textarea>
-    <p class="cf-error" data-error-for="cf-message" hidden>Please add a few details about your event.</p>
+    <p class="cf-error" id="cf-message-error" data-error-for="cf-message" hidden>Please add a few details about your event.</p>
   </div>
 
   <div class="cf-actions">
@@ -112,7 +122,7 @@ const isDev = import.meta.env.DEV;
 
 <div class="cf-success" data-form-success hidden>
   <p class="label-text">REQUEST SENT</p>
-  <h3>Thank you — we have it.</h3>
+  <h2>Thank you — we have it.</h2>
   <p>
     We'll be in touch at the email you gave us, usually within two business days. If it's urgent, reach us
     directly at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
@@ -133,6 +143,9 @@ const isDev = import.meta.env.DEV;
       field?.classList.toggle('is-invalid', show);
       field?.setAttribute('aria-invalid', show ? 'true' : 'false');
       if (error) error.hidden = !show;
+      // aria-describedby stays pointed at the message the whole time; hiding
+      // the element is what takes it out of the accessibility tree, so there is
+      // nothing to add or remove here.
     };
 
     // Clear a field's error as soon as the person starts fixing it.
@@ -158,7 +171,7 @@ const isDev = import.meta.env.DEV;
       if (!validate()) return;
 
       // Honeypot: a bot filled the hidden field, so pretend all is well.
-      const trap = form.querySelector<HTMLInputElement>('input[name="_gotcha"]');
+      const trap = form.querySelector<HTMLInputElement>('#cf-company');
       if (trap?.value) {
         form.hidden = true;
         if (success) success.hidden = false;

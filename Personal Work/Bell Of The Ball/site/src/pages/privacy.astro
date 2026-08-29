@@ -1,0 +1,203 @@
+---
+/*
+ * Privacy notice.
+ *
+ * Nevada requires this. NRS 603A.340 obliges an operator of a website that
+ * collects personal information from Nevada consumers to post a notice
+ * covering: the categories collected, the categories of third parties it is
+ * shared with, the process for a consumer to review and request changes to
+ * their information, whether any third party may collect information about a
+ * consumer's activity across different websites, and an effective date. A
+ * Reno business whose own FAQ says it serves Reno, Sparks and Carson City is
+ * squarely in scope.
+ *
+ * Everything below was written against what the site actually does, verified
+ * in the built output rather than assumed:
+ *
+ *   - The consultation form is the ONLY place the site collects anything.
+ *   - No analytics of any kind. No Google Analytics, no Meta pixel, nothing.
+ *   - No cookies. The site never calls document.cookie, localStorage,
+ *     sessionStorage or indexedDB — so there is no cookie banner because
+ *     there is nothing to consent to.
+ *   - Exactly three external origins are contacted on a normal page view:
+ *     fonts.googleapis.com and fonts.gstatic.com for the typefaces, and
+ *     api.web3forms.com only at the moment someone submits the form.
+ *
+ * If any of that changes — an analytics script, an embedded map, a booking
+ * widget — this page has to change with it. That is the maintenance cost of
+ * making specific claims instead of vague ones, and it is worth paying: a
+ * notice that lists cookies the site does not set is not a safer notice, it
+ * is an inaccurate one.
+ *
+ * All three open questions were closed by the client on 2026-08-29:
+ *   - There is no separate incorporated entity. "Bell of the Ball" is the
+ *     business, so the notice names it and nothing else. (The Instagram handle
+ *     reading "belloftheballinc" is just a handle.) Rendered the way the rest
+ *     of the site sets it — "Bell of the Ball" — so the notice matches the
+ *     footer's copyright line and every page title.
+ *   - Effective date is the launch date, hard-coded below. It must NOT be
+ *     derived from `new Date()`: an effective date states when these terms
+ *     took effect, so it changes only when the notice itself changes. A date
+ *     that silently follows the clock would claim the current version has
+ *     always been in force.
+ *   - No mailing address. Not required by NRS 603A, and the client does not
+ *     want one published. Email is the contact route throughout.
+ *
+ * NOT legal advice. This is a careful, accurate draft written from the site's
+ * real behaviour; have the client's attorney read it before launch.
+ */
+import Layout from '../layouts/Layout.astro';
+import CTAButton from '../components/CTAButton.astro';
+import { CONTACT_EMAIL } from '../data/site';
+
+/*
+ * Static by design — see the note above. Update this by hand, and only when
+ * the notice's substance changes.
+ */
+const EFFECTIVE = 'August 29, 2026';
+const LEGAL_NAME = 'Bell of the Ball';
+---
+
+<Layout
+  title="Privacy | Bell of the Ball"
+  description="What Bell of the Ball collects when you use this site, who it is shared with, and how to ask us to change or delete it."
+>
+  <section class="hero" style="min-height: 45vh;">
+    <div class="hero-content">
+      <span class="section-label reveal">YOUR INFORMATION</span>
+      <h1
+        class="reveal"
+        style="font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5rem); line-height: 1; margin: 1rem 0 2rem; color: var(--color-warm-ink);"
+      >
+        Privacy Notice
+      </h1>
+      <p class="hero-tagline reveal" style="max-width: 560px;">
+        The short version: the consultation form is the only thing on this site that collects anything, we do
+        not track you, and we have never sold anyone's information.
+      </p>
+    </div>
+  </section>
+
+  <section class="about" style="padding-top: 0;">
+    <div class="about-container legal">
+      <p class="legal-meta reveal">
+        <span class="label-text">Effective</span>
+        <span>{EFFECTIVE}</span>
+      </p>
+
+      <div class="legal-body reveal">
+        <h2>Who this is about</h2>
+        <p>
+          This notice covers <strong>{LEGAL_NAME}</strong> and this website. We are an event planning, design,
+          officiating, notary and rental business based in Reno, Nevada, serving Reno, Sparks and Carson City.
+        </p>
+
+        <h2>What we collect, and when</h2>
+        <p>
+          The consultation form is the only part of this site that collects anything about you. If you fill it
+          in, you give us:
+        </p>
+        <ul>
+          <li><strong>Your name and email address.</strong> Both required — the email is how we reply.</li>
+          <li><strong>Your phone number</strong>, if you choose to give it. Optional.</li>
+          <li><strong>Details about your event</strong> — the date or rough timing, the type of event, and whatever you write in the message box.</li>
+        </ul>
+        <p>
+          Everything in that list is information you typed and chose to send. We collect nothing about you
+          before that point, and nothing at all if you read the site and leave.
+        </p>
+
+        <h2>What we do not do</h2>
+        <p>
+          This is worth stating plainly, because most privacy notices describe practices this site does not
+          have:
+        </p>
+        <ul>
+          <li><strong>We do not use cookies.</strong> This site sets none, which is why you were not asked to accept any.</li>
+          <li><strong>We do not run analytics.</strong> There is no Google Analytics, no Meta pixel, and no other tracking script anywhere on this site.</li>
+          <li><strong>We do not build profiles</strong>, run advertising, or track you from page to page.</li>
+          <li><strong>We have never sold personal information</strong>, and we do not intend to. See the Nevada section below.</li>
+        </ul>
+
+        <h2>Who else is involved</h2>
+        <p>Three companies necessarily see something when this site is used:</p>
+        <ul>
+          <li>
+            <strong>Web3Forms</strong> delivers the consultation form. When you press Send — and only then —
+            your submission passes through their service on its way to our inbox. They process it to deliver
+            it; they are not given it for their own purposes.
+          </li>
+          <li>
+            <strong>GitHub</strong> hosts this site. Like any web host, their servers record the requests they
+            serve, which includes your IP address. We do not have access to those logs.
+          </li>
+          <li>
+            <strong>Google Fonts</strong> serves the typefaces the site is set in. Loading a font from Google's
+            servers means your browser contacts Google and, as with any request, your IP address is visible to
+            them in doing so.
+          </li>
+        </ul>
+        <p>
+          Those three are the whole list. We do not share your enquiry with anyone else — no lead brokers, no
+          marketing lists, no other vendors.
+        </p>
+
+        <h2>Whether anyone tracks you across other websites</h2>
+        <p>
+          Nevada asks us to answer this directly. <strong>We do not allow third parties to collect information
+          about your activity across different websites through this site.</strong> There is no advertising or
+          analytics code here that could do so. Google's font service and our host see individual requests to
+          this site; neither is used to follow you elsewhere.
+        </p>
+
+        <h2>How long we keep your enquiry</h2>
+        <p>
+          Your enquiry lands in our email inbox and stays there like any other message, so we can find the
+          history if you book with us or come back later. If you would rather it did not, ask us to delete it
+          and we will.
+        </p>
+
+        <h2>Reviewing, correcting or deleting your information</h2>
+        <p>
+          Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and tell us what you want. You can ask
+          us to show you what we hold about you, correct anything wrong, or delete it entirely. We may need to
+          check you are the person who sent the enquiry — usually by replying from the same address you used.
+          We aim to respond within a few business days, and there is no charge.
+        </p>
+
+        <h2>Nevada residents: the right to opt out of sale</h2>
+        <p>
+          Nevada law gives residents the right to tell a website operator not to sell their personal
+          information. <strong>We do not sell personal information and never have</strong>, so there is nothing
+          to opt out of. If you would like to submit a request anyway, or want that confirmed in writing, email
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> with "Nevada opt-out" in the subject line and
+          we will confirm.
+        </p>
+
+        <h2>Children</h2>
+        <p>
+          We plan a good many children's parties, but we deal with the adults arranging them. This site is not
+          directed at children and we do not knowingly collect information from anyone under 13. If you believe
+          a child has sent us something through this form, tell us and we will delete it.
+        </p>
+
+        <h2>Changes to this notice</h2>
+        <p>
+          If we add anything to this site that collects or shares more than what is described above, we will
+          update this page and change the effective date at the top before doing so.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Questions about any of this go to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>, and a
+          person reads them.
+        </p>
+      </div>
+
+      <div class="legal-cta reveal">
+        <p>Still want to get in touch about an event?</p>
+        <CTAButton href="/contact">Book a Consultation</CTAButton>
+      </div>
+    </div>
+  </section>
+</Layout>

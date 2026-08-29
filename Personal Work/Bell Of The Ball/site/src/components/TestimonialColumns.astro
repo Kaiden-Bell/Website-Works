@@ -60,7 +60,18 @@ const isDev = import.meta.env.DEV;
       </p>
     )}
 
-    <div class="tm-columns">
+    <!--
+      The columns scroll on their own and never stop, which WCAG 2.2.2 treats as
+      moving content that needs a way to pause. Hovering already paused them,
+      but that is no help to anyone reading with a keyboard or on a phone, so
+      the control below is a real button.
+    -->
+    <button type="button" class="tm-pause" data-tm-pause aria-pressed="false">
+      <span aria-hidden="true">❚❚</span>
+      <span data-tm-pause-label>Pause reviews</span>
+    </button>
+
+    <div class="tm-columns" data-tm-columns>
       {columns.map((column, ci) => (
         <div class={`tm-column ${column.className}`}>
           <div class="tm-track" style={`--tm-duration: ${column.duration};`}>
@@ -92,3 +103,23 @@ const isDev = import.meta.env.DEV;
     </div>
   </div>
 </section>
+
+<script>
+  const columns = document.querySelector<HTMLElement>('[data-tm-columns]');
+  const button = document.querySelector<HTMLButtonElement>('[data-tm-pause]');
+  const label = document.querySelector<HTMLElement>('[data-tm-pause-label]');
+
+  if (columns && button && label) {
+    // Someone who has asked for reduced motion never had the animation, so a
+    // control to stop it would be a control that does nothing.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      button.hidden = true;
+    } else {
+      button.addEventListener('click', () => {
+        const paused = columns.classList.toggle('is-paused');
+        button.setAttribute('aria-pressed', String(paused));
+        label.textContent = paused ? 'Resume reviews' : 'Pause reviews';
+      });
+    }
+  }
+</script>

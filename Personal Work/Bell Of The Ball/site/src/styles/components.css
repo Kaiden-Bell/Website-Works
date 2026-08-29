@@ -287,6 +287,62 @@
   cursor: pointer;
 }
 
+/* Skip link — off-screen until focused, then a solid chip in the top-left
+   above everything else including the rail. */
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  transform: translateY(-120%);
+  padding: 0.9rem 1.4rem;
+  background-color: var(--color-bottle-green);
+  color: var(--color-paper-white);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform var(--transition-fast);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: -2px;
+}
+
+.main-content:focus { outline: none; }
+
+/* Marquee pause control — WCAG 2.2.2 asks for a way to stop motion that starts
+   on its own and runs past five seconds. Hover already paused it, which does
+   nothing for a keyboard or touch user, so there is a real button now. */
+.tm-pause {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.1rem;
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--color-bottle-green) 30%, transparent);
+  color: var(--color-warm-taupe);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.tm-pause:hover { border-color: var(--color-bottle-green); color: var(--color-bottle-green); }
+
+.tm-pause:focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: 3px;
+}
+
+.tm-columns.is-paused .tm-track { animation-play-state: paused; }
+
 /* Main Content Wrapper */
 .main-content {
   margin-left: 60px;
@@ -341,8 +397,19 @@
   mix-blend-mode: multiply;
 }
 
+/*
+ * 11vw, not 12. At 12 the final letter of "THE BALL" reached 61.6vw while the
+ * photograph's column starts at 60vw, so the glyph ran under the facet and was
+ * clipped by it — a collision that had always been in the layout but only
+ * became visible once the photograph was centred properly in its column.
+ *
+ * The title and the photograph's left edge both scale in vw, but the hero's
+ * padding does not, so the copy takes a larger share of a narrow viewport and
+ * the two meet again around 1150px. The breakpoint below is what actually
+ * guarantees the clearance; this size handles everything above it.
+ */
 .hero-title {
-  font-size: clamp(4rem, 12vw, 14rem);
+  font-size: clamp(4rem, 11vw, 13rem);
   line-height: 0.85;
   margin-bottom: 2rem;
   margin-left: -2vw;
@@ -351,31 +418,131 @@
 
 .hero-tagline {
   margin-bottom: 3rem;
-  max-width: 400px;
+  max-width: 620px;
+  line-height: 2;
+}
+
+/* Second line of the tagline. The first line says what is sold; this one says
+   where from — it is the single most common question a local search brings, and
+   burying it on the About page loses the visitor who is checking they are in
+   the right city before they read anything else. Ochre so it reads as a
+   distinct claim rather than a run-on of the line above. */
+.hero-locale {
+  color: var(--color-ochre-rust);
+  letter-spacing: 0.18em;
 }
 
 .hero-media-wrapper {
   position: absolute;
   right: 5%;
   top: 50%;
+  /* Declared as the reveal animation's rest position too, so arriving on
+     screen returns the photograph here rather than to the origin. */
+  --rest-transform: translateY(-50%);
   transform: translateY(-50%);
   width: 35vw;
   height: 75vh;
   z-index: 1;
 }
 
+/* ==========================================================================
+   Parallax frames + lightbox triggers
+   Every photograph on the landing page is a frame with an oversized image
+   inside it. The frame is what the layout sizes and what the .shape-* facet
+   clips; the image is taller than the frame and slides within that overhang,
+   so scroll parallax costs nothing in layout and can never expose an edge.
+   See src/scripts/parallax.js for the travel, which is capped well inside the
+   overhang the height below provides.
+   ========================================================================== */
+.px-frame {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  transition: clip-path var(--transition-slow), transform var(--transition-slow);
+}
+
+.px-frame > img {
+  position: absolute;
+  /* 12% of overhang above and below. src/scripts/parallax.js clamps travel to
+     the same 12%, so the frame can never show an edge at any depth. */
+  top: -12%;
+  left: 0;
+  width: 100%;
+  height: 124%;
+  object-fit: cover;
+  display: block;
+  transform: translate3d(0, var(--px-shift, 0px), 0);
+  will-change: transform;
+}
+
+/* A photograph you can open is a control, so it has to behave like one —
+   pointer and keyboard focus. The button is stripped back to nothing else so
+   the sizing classes it carries still apply.
+   
+   The background matters: .hero-media, .service-media, .p-media and
+   .media-block each paint a bottle-green (or warm-ink) placeholder, which was
+   correct while those classes sat on the <img> and the facet clipped the
+   colour away with the photograph. On a trigger it is not clipped, so it
+   printed a hard rectangular slab behind every faceted photograph. The
+   element-plus-class selector outranks all four without touching the pages
+   that still use those classes on a plain <img>. */
+button.px-open {
+  display: block;
+  border: 0;
+  padding: 0;
+  background: none;
+  background-color: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: zoom-in;
+  text-align: inherit;
+}
+
+/* The trigger carries whatever the layout sizes (.service-media, .p-media,
+   .media-block …); the frame just fills it. */
+.px-open > .px-frame { width: 100%; height: 100%; }
+
+/*
+ * How an openable photograph says so.
+ *
+ * The first attempt laid a gradient and a "VIEW THE EVENT" cue across the
+ * bottom of each frame. On the rental cards, whose facet is almost square, it
+ * was fine. On the hero, services and archive tiles it was not: those facets
+ * cut 5–15% off a corner, so the cue's rectangular bar and its text were
+ * sliced by the clip, and the whole thing sat on top of the photograph it was
+ * advertising.
+ *
+ * Nothing goes over the photograph now. The facet itself moves — which is
+ * already this site's idiom for "this responds to you", the rental cards and
+ * the hero have always done it — and the caption beneath the archive tiles
+ * picks up an ochre marker. Every word stays outside the clip.
+ */
+.px-open:focus-visible { outline: 2px solid var(--color-ochre-rust); outline-offset: 6px; }
+
 /* Clip Paths and Media */
 .hero-media {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   background-color: var(--color-bottle-green);
   transition: clip-path var(--transition-slow);
 }
 
 .shape-1 { clip-path: polygon(5% 0, 100% 0, 95% 100%, 0% 100%); }
 .shape-1:hover { clip-path: polygon(0 5%, 95% 0, 100% 95%, 5% 100%); }
+
+/* Hover/focus facets for the openable photographs. Each is its own shape
+   rotated a step around, so the photograph shifts under the cursor without
+   the frame changing size or anything being drawn across the image. */
+.px-open:hover > .shape-2, .px-open:focus-visible > .shape-2 { clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 95%); }
+.px-open:hover > .shape-3, .px-open:focus-visible > .shape-3 { clip-path: polygon(0 10%, 90% 0, 100% 90%, 10% 100%); }
+.px-open:hover > .shape-4, .px-open:focus-visible > .shape-4 { clip-path: polygon(10% 0, 100% 10%, 100% 100%, 0 90%); }
+.px-open:hover > .shape-5, .px-open:focus-visible > .shape-5 { clip-path: polygon(0 0, 100% 5%, 95% 95%, 5% 100%); }
+.px-open:hover > .shape-6, .px-open:focus-visible > .shape-6 { clip-path: polygon(15% 0, 100% 0, 100% 85%, 0 100%); }
+.px-open:hover > .shape-7, .px-open:focus-visible > .shape-7 { clip-path: polygon(0 5%, 95% 0, 100% 95%, 5% 100%); }
+.px-open:hover > .shape-8, .px-open:focus-visible > .shape-8 { clip-path: polygon(5% 0, 100% 5%, 95% 100%, 0 95%); }
+.px-open:hover > .shape-9, .px-open:focus-visible > .shape-9 { clip-path: polygon(0 10%, 90% 0, 100% 90%, 10% 100%); }
+.px-open:hover > .shape-10, .px-open:focus-visible > .shape-10 { clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 90%); }
 .shape-2 { clip-path: polygon(0 0, 90% 5%, 100% 95%, 10% 100%); }
 .shape-3 { clip-path: polygon(10% 0, 100% 10%, 90% 100%, 0 90%); }
 .shape-4 { clip-path: polygon(0 10%, 100% 0, 90% 90%, 10% 100%); }
@@ -579,7 +746,16 @@
 
 .portfolio-title {
   font-size: 5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Says out loud that the tiles open, since a grid of photographs otherwise
+   reads as a grid of photographs. */
+.portfolio-lead {
+  max-width: 520px;
   margin-bottom: 6rem;
+  font-size: 1.05rem;
+  color: var(--color-warm-taupe);
 }
 
 .portfolio-grid {
@@ -602,6 +778,40 @@
   background-color: var(--color-bottle-green);
   margin-bottom: 1rem;
   transition: clip-path var(--transition-slow);
+}
+
+/* The caption stacks the event name over its photograph count — the count is
+   the part that tells a visitor there is more behind the tile than the one
+   frame they can see. */
+.p-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.p-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  letter-spacing: 0.12em;
+  /* Full strength, not 85%: the faded version measured 3.29:1 on paper-white
+     at 12px, well under the 4.5:1 small-text minimum. */
+  color: var(--color-ochre-rust);
+}
+
+/* The "you can open this" cue, kept in the caption rather than laid over the
+   photograph — the facets cut any overlay to ribbons. */
+.p-open {
+  color: var(--color-bottle-green);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.portfolio-item:hover .p-open,
+.portfolio-item:focus-within .p-open {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .p-item-1 { grid-column: 1 / 5; margin-top: 4rem; }
@@ -646,6 +856,58 @@
   align-items: center;
   color: var(--color-warm-taupe);
   font-size: 0.9rem;
+}
+
+/* FAQ band. Sits above the legal row on every page, because the questions it
+   answers — scope, travel, deposits, what we don't do — are the ones that stop
+   an enquiry before it starts. Ochre ground so it reads as a destination
+   rather than as small print. */
+.footer-faq {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+  padding: 2rem 2.25rem;
+  background-color: color-mix(in srgb, var(--color-ochre-rust) 10%, var(--color-paper-white));
+  clip-path: polygon(0 4%, 100% 0, 100% 96%, 0 100%);
+}
+
+.footer-faq-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 62ch;
+}
+
+.footer-faq-label { color: var(--color-ochre-rust); }
+
+.footer-faq-lead {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.45;
+  color: var(--color-warm-ink);
+}
+
+.footer-faq-link {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-paper-white);
+  background-color: var(--color-bottle-green);
+  padding: 1rem 1.75rem;
+  transition: background-color var(--transition-fast);
+}
+
+.footer-faq-link:hover { background-color: var(--color-ochre-rust); }
+
+.footer-faq-link:focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: 3px;
 }
 
 /* The slogan leads, the legal line sits under it in the same taupe. Stacking
@@ -900,39 +1162,77 @@
    Scroll cue — /pricing, between the estimator and the FAQ
    ========================================================================== */
 .scroll-cue {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 3.5rem 2rem 4.5rem;
+  display: block;
+  padding: 0 4rem 5rem;
   background-color: var(--color-parchment);
   text-decoration: none;
-  text-align: center;
+}
+
+/* The slab, not the section, is what a visitor sees. Paper-white on the
+   parchment section, faceted, with an ochre rule across the top — the same
+   language the FAQ's own CTA panel uses at the other end of the questions. */
+.scroll-cue-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3.25rem 3rem;
+  background-color: var(--color-paper-white);
+  border-top: 3px solid var(--color-ochre-rust);
+  clip-path: polygon(0 0, 100% 0, 100% 94%, 0 100%);
   transition: background-color var(--transition-fast);
 }
 
-.scroll-cue:hover { background-color: color-mix(in srgb, var(--color-ochre-rust) 7%, var(--color-parchment)); }
+.scroll-cue:hover .scroll-cue-inner {
+  background-color: color-mix(in srgb, var(--color-ochre-rust) 6%, var(--color-paper-white));
+}
 
 .scroll-cue-label { color: var(--color-ochre-rust); }
 
+.scroll-cue-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+  color: var(--color-warm-ink);
+}
+
 .scroll-cue-lead {
-  max-width: 46ch;
+  max-width: 58ch;
   color: var(--color-warm-taupe);
   font-size: 1.05rem;
   line-height: 1.6;
 }
 
+/* Reads as the button the estimator no longer offers, so the page still has an
+   obvious thing to do next — it just points down the page instead of off it. */
+.scroll-cue-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding: 1rem 1.75rem;
+  background-color: var(--color-bottle-green);
+  color: var(--color-paper-white);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background-color var(--transition-fast);
+}
+
+.scroll-cue:hover .scroll-cue-action { background-color: var(--color-ochre-rust); }
+
 .scroll-cue-arrow {
-  margin-top: 0.75rem;
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   line-height: 1;
-  color: var(--color-ochre-rust);
   animation: scroll-cue-bob 2.1s var(--ease-organic) infinite;
 }
 
 @keyframes scroll-cue-bob {
   0%, 100% { transform: translateY(0); opacity: 0.65; }
-  50% { transform: translateY(7px); opacity: 1; }
+  50% { transform: translateY(5px); opacity: 1; }
 }
 
 .scroll-cue:focus-visible {
@@ -1653,6 +1953,33 @@
   outline-offset: 2px;
 }
 
+/* Way out of the overlay and into the archive entry the set came from. Only
+   the landing page's lightbox renders it — on /portfolio you are already
+   there. */
+.pf-panel-link {
+  align-self: flex-start;
+  margin-top: 1.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-bottle-green);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-bottle-green) 35%, transparent);
+  padding-bottom: 0.35rem;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.pf-panel-link:hover {
+  color: var(--color-ochre-rust);
+  border-bottom-color: var(--color-ochre-rust);
+}
+
+.pf-panel-link:focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: 3px;
+}
+
 .pf-panel-note {
   margin-top: 2rem;
   color: var(--color-warm-taupe);
@@ -1703,6 +2030,7 @@
   .pf-panel,
   .pf-stage-figure img { animation: none; }
   .pf-tile:hover .pf-tile-media img { transform: none; }
+  .px-frame > img { transform: none; }
   .reveal, .reveal-up, .reveal-right {
     opacity: 1;
     transform: none;
@@ -1713,6 +2041,15 @@
   .nav-flyout-brand { transform: translate(0, -0.5rem); }
   .team-lightbox { transform: none; }
   .team-lightbox::after { display: none; }
+}
+
+/* Between the phone layout and a wide desktop the hero title and the hero
+   photograph compete for the same band of the screen. The photograph gives up
+   the ground: a narrower column, and a display size that keeps the wordmark
+   clear of it at every width in the range. */
+@media (max-width: 1400px) and (min-width: 769px) {
+  .hero-media-wrapper { width: 30vw; }
+  .hero-title { font-size: clamp(3.5rem, 9.5vw, 11rem); }
 }
 
 /* Responsive */
@@ -1745,7 +2082,7 @@
   .main-content { margin-left: 0; width: 100%; padding-top: 60px; }
 
   .hero { padding: 2rem; flex-direction: column-reverse; justify-content: center; }
-  .hero-media-wrapper { position: relative; width: 100%; height: 50vh; right: 0; transform: none; top: 0; margin-bottom: 2rem; }
+  .hero-media-wrapper { position: relative; width: 100%; height: 50vh; right: 0; --rest-transform: translate(0, 0); transform: none; top: 0; margin-bottom: 2rem; }
   .hero-content { margin-top: 2rem; }
   .hero-title { font-size: 4rem; margin-left: 0; }
 
@@ -1756,10 +2093,15 @@
 
   .footer { padding: 2rem 1.5rem; }
   .footer-content { flex-direction: column; gap: 1rem; text-align: center; }
-  .footer-links a { margin: 0 1rem; }
+  .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.5rem; }
+  .footer-links a { margin: 0; }
+  .footer-faq { padding: 1.75rem 1.5rem; margin-bottom: 2.5rem; }
+  .footer-faq-link { width: 100%; text-align: center; }
 
   .testimonials, .faq-section { padding: 4rem 1.5rem; }
-  .scroll-cue { padding: 2.5rem 1.5rem 3.5rem; }
+  .scroll-cue { padding: 0 1.5rem 3.5rem; }
+  .scroll-cue-inner { padding: 2rem 1.5rem; }
+  .scroll-cue-action { width: 100%; justify-content: center; }
   .faq-band + .faq-band { margin-top: 2.5rem; }
   .faq-cta { margin-top: 3rem; padding: 2.5rem 1.5rem; }
   .testimonials-head, .faq-head { margin-bottom: 3rem; }
@@ -1768,6 +2110,86 @@
   .team-lightbox { padding: 0.9rem 0.9rem 1rem; }
   .about-intro-second { width: 100%; margin: 2rem 0 0; }
   .faq-item { padding: 1.5rem; gap: 1rem; flex-direction: column; }
+}
+
+/* ==========================================================================
+   Legal pages
+   Long-form prose, so the measure is tight and the rhythm is generous. Reuses
+   the ledger language rather than inventing a second one: hairline rules under
+   each heading, mono for the meta line, no cards.
+   ========================================================================== */
+.legal { max-width: 760px; }
+
+.legal-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  margin-bottom: 3rem;
+  border-bottom: 2px solid var(--color-warm-ink);
+  color: var(--color-warm-taupe);
+}
+
+.legal-body h2 {
+  font-size: 1.6rem;
+  line-height: 1.25;
+  margin: 3rem 0 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-bottle-green) 18%, transparent);
+}
+
+.legal-body > h2:first-child { margin-top: 0; }
+
+.legal-body p {
+  font-size: 1.05rem;
+  color: var(--color-warm-taupe);
+  margin-bottom: 1.1rem;
+  max-width: 68ch;
+}
+
+.legal-body strong { color: var(--color-warm-ink); font-weight: 600; }
+
+.legal-body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  max-width: 68ch;
+}
+
+.legal-body li {
+  position: relative;
+  padding-left: 1.6rem;
+  margin-bottom: 0.85rem;
+  font-size: 1.05rem;
+  color: var(--color-warm-taupe);
+}
+
+.legal-body li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 0.6rem;
+  height: 1px;
+  background-color: var(--color-ochre-rust);
+}
+
+.legal-body a { color: var(--color-ochre-rust); }
+
+.legal-cta {
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: 2px solid var(--color-warm-ink);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.legal-cta p {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--color-warm-ink);
 }
 
 /* ==========================================================================
@@ -1934,17 +2356,14 @@
   gap: 0.9rem;
 }
 
-.rental-card img {
+.rental-card .px-frame {
   width: 100%;
   aspect-ratio: 4 / 5;
-  object-fit: cover;
-  display: block;
   background-color: var(--color-bottle-green);
   clip-path: polygon(0 2%, 98% 0, 100% 98%, 2% 100%);
-  transition: clip-path var(--transition-slow);
 }
 
-.rental-card:hover img { clip-path: polygon(0 0, 100% 2%, 98% 100%, 2% 98%); }
+.rental-card:hover .px-frame { clip-path: polygon(0 0, 100% 2%, 98% 100%, 2% 98%); }
 
 .rental-name { color: var(--color-warm-taupe); }
 
@@ -2003,5 +2422,5 @@
 @media (prefers-reduced-motion: reduce) {
   .to-top { animation: none; }
   .to-top:hover { transform: none; }
-  .rental-card:hover img { clip-path: polygon(0 2%, 98% 0, 100% 98%, 2% 100%); }
+  .rental-card:hover .px-frame { clip-path: polygon(0 2%, 98% 0, 100% 98%, 2% 100%); }
 }

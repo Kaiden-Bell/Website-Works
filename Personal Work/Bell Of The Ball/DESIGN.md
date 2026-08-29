@@ -3,11 +3,11 @@ name: Bell of the Ball — Botanical Ledger
 description: An heirloom field-guide crossed with an accountant's precision — bottle-green and ochre-rust cut into faceted diagonal blocks, captioned in a tracked ledger-label mono.
 colors:
   bottle-green: "#1f3d2e"
-  ochre-rust: "#a8672a"
+  ochre-rust: "#945a25"
   parchment: "#efe6d3"
   paper-white: "#faf6ec"
   warm-ink: "#221d15"
-  warm-taupe: "#7a6748"
+  warm-taupe: "#786547"
 typography:
   display:
     fontFamily: "Libre Caslon Display, Georgia, serif"
@@ -94,7 +94,7 @@ This is the client-approved evolution of Direction 3 (*Dynamic Organic Avant-Gar
 Warm and earthbound, weighted toward the dark end so the ochre accent reads as the page's one hot note.
 
 ### Primary
-- **Ochre Rust** (`#a8672a`): the sole call-to-action color. CTA button fill, active nav-link, hover accents, the rental section's service number. Used nowhere else — its rarity is what makes "Book Consultation" findable at a glance.
+- **Ochre Rust** (`#945a25`): the sole call-to-action color. CTA button fill, active nav-link, hover accents, the rental section's service number. Used nowhere else — its rarity is what makes "Book Consultation" findable at a glance. Darkened from #a8672a for WCAG AA: the original measured 3.65:1 on parchment and 4.19:1 under paper-white button text, both under the 4.5:1 small-text minimum.
 
 ### Secondary
 - **Bottle Green** (`#1f3d2e`): the system's structural dark. Mobile menu fill, CTA hover state, one end of every media-placeholder gradient, the tint source for hairline borders and the rentals overlay (via `color-mix()` off this token, never a hard-coded value).
@@ -103,7 +103,7 @@ Warm and earthbound, weighted toward the dark end so the ochre accent reads as t
 - **Parchment** (`#efe6d3`): main page ground (body background, services section, sidebar nav).
 - **Paper White** (`#faf6ec`): the lighter alternate ground (about section, portfolio section) and CTA text color.
 - **Warm Ink** (`#221d15`): primary text color for headings and body copy — a near-black ink-brown, not a true black.
-- **Warm Taupe** (`#7a6748`): secondary/muted text — labels, captions, paragraph copy, footer links.
+- **Warm Taupe** (`#786547`): secondary/muted text — labels, captions, paragraph copy, footer links. Darkened from #7a6748, which measured 4.38:1 on parchment.
 
 ### Named Rules
 **The One Accent Rule.** Ochre rust is the only color permitted on an actionable element (button, active link, hover state). If a second element on the same viewport wants ochre, it is competing with the CTA and loses.

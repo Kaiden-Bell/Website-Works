@@ -1,6 +1,14 @@
 // Ported from the v3/b comp's main.js. The scroll-spy became a static
 // current-page check since each section is now its own route.
+import { initParallax } from './parallax.js';
+import { initLightbox } from './lightbox.js';
+
 document.addEventListener('DOMContentLoaded', () => {
+  // Both are no-ops on pages that carry none of their markup, so they can be
+  // wired up unconditionally here rather than per-page.
+  initParallax();
+  initLightbox();
+
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
   const mobileMenu = document.getElementById('mobileMenu');
   const mobileLinks = document.querySelectorAll('.mobile-links a');

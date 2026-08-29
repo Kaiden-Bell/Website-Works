@@ -33,22 +33,35 @@ const answerCount = FAQ_ITEMS.filter((item) => item.status === 'confirmed').leng
 
   <section class="services" style="padding-top: 0;">
     <div class="services-container reveal">
-      <PricingEstimator client:visible showPlaceholderNotice={isDev} />
+      <PricingEstimator client:visible showPlaceholderNotice={isDev} showCta={false} />
     </div>
   </section>
 
   <!--
-    The estimator answers "what does it cost" and then leaves people with the
-    questions it cannot answer — deposits, lead time, what the base covers.
-    Those answers are already on this page, just several screens down, so this
-    is the signpost that stops the visitor emailing to ask instead.
+    The estimator answers "what does it cost" and then leaves people with every
+    question it cannot answer — deposits, lead time, how far we travel, what the
+    base actually covers. Those answers are already on this page, several
+    screens down.
+
+    This used to be a parchment panel on a parchment section, sitting under the
+    estimator's own booking button. It lost twice: nothing marked it as the next
+    step, and the button above it offered a way off the page first. The button
+    is gone (showCta={false}) and the signpost is now a slab a visitor cannot
+    scroll past without reading, so the question they were about to email
+    arrives already answered.
   -->
   <a class="scroll-cue reveal" href="#faq">
-    <span class="label-text scroll-cue-label">Still have questions?</span>
-    <span class="scroll-cue-lead">
-      {answerCount} answers below — deposits, lead times, what the base price covers, and more.
+    <span class="scroll-cue-inner">
+      <span class="label-text scroll-cue-label">Still have questions?</span>
+      <span class="scroll-cue-title">{answerCount} answers, before you book</span>
+      <span class="scroll-cue-lead">
+        Deposits and what holds a date. Lead times. How far we travel. What the base price actually covers — and
+        the handful of things we don't take on.
+      </span>
+      <span class="scroll-cue-action">
+        Read the answers <span class="scroll-cue-arrow" aria-hidden="true">↓</span>
+      </span>
     </span>
-    <span class="scroll-cue-arrow" aria-hidden="true">↓</span>
   </a>
 
   <FAQSection />

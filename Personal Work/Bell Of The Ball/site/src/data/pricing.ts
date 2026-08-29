@@ -24,11 +24,15 @@
  *     self-serve and an attendant is requested on top.
  *   - Money bouquets and leis from $50 plus the cash placed inside, confirmed
  *     2026-08-28 (was $100).
+ *   - Diaper cakes at $50, confirmed 2026-08-29. The guide's $100 was wrong;
+ *     they are priced the same as the money bouquets and leis.
+ *   - Balloon arches from $250, confirmed 2026-08-29. "From" is the operative
+ *     word — see the note on BALLOON_ARCH below.
  *
- * NOT settled, and why PRICING_IS_PLACEHOLDER stays true:
- *   - The $250 balloon arch and the $100 diaper cake still trace to the guide
- *     rather than to the client. They are the last two figures on this page
- *     nobody has confirmed out loud. Confirm them and this flag can go false.
+ * With those two closed, every figure on this page traces to the client rather
+ * than to the guide, so PRICING_IS_PLACEHOLDER is now false.
+ *
+ * STILL NOT PRICED, deliberately:
  *   - The guide's other add-on rows are literal "TEMP" entries, so they are
  *     omitted rather than invented.
  *   - Extra balloons are still "Varies" in the guide, so that row carries
@@ -37,7 +41,7 @@
  *     "From $X" and never as an exact figure.
  */
 
-export const PRICING_IS_PLACEHOLDER = true;
+export const PRICING_IS_PLACEHOLDER = false;
 
 export interface PricingOption {
   name: string;
@@ -107,7 +111,16 @@ const MACHINES: PricingOption[] = [
   },
 ];
 
-const BALLOON_ARCH: PricingOption = { name: 'Balloon Arch', price: 250 };
+/*
+ * $250 is a floor, not a fixed price — an arch is scoped to the span and the
+ * colour count. It still counts at $250 toward the estimate, which is correct
+ * here because the estimator's total is only ever presented as "From $X".
+ */
+const BALLOON_ARCH: PricingOption = {
+  name: 'Balloon Arch',
+  price: 250,
+  note: 'Starting price — scoped to size and color count',
+};
 
 const MONEY_BOUQUET: PricingOption = {
   name: 'Money Bouquet or Lei',
@@ -115,7 +128,7 @@ const MONEY_BOUQUET: PricingOption = {
   note: 'Plus the cash placed in the bouquet',
 };
 
-const DIAPER_CAKE: PricingOption = { name: 'Diaper Cake', price: 100 };
+const DIAPER_CAKE: PricingOption = { name: 'Diaper Cake', price: 50 };
 
 export const EVENT_TYPES: EventType[] = [
   {
