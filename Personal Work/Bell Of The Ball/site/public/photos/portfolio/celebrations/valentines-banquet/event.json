@@ -1,0 +1,10 @@
+{
+  "title": "Valentine’s Banquet",
+  "description": "A church hall dressed for Valentine’s. Chair backs are tied off in red satin down every row, and the serving table carries a heart-print runner, a bud vase with a single rose, and red favours boxed under a printed banner.",
+  "order": 80,
+  "cover": "valentines-sweetheart-table.jpg",
+  "alt": {
+    "valentines-sweetheart-table.jpg": "A Valentine's Day banner above a serving table with a heart-print runner, a single rose in a bottle, and red favours",
+    "chairs-tied-with-red-bows.jpg": "Rows of hall chairs with red satin bows tied to the backs and single roses tucked into the ribbon"
+  }
+}

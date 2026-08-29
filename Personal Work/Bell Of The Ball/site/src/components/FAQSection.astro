@@ -10,8 +10,18 @@
  *    resolve through those tokens instead.
  *  - `rounded-lg` + `shadow-sm` dropped for facets and flat fills, per the
  *    Facet Rule and Flat-By-Default Rule in DESIGN.md.
+ *
+ * The set outgrew a flat grid once the client's real answers landed, so items
+ * are banded under their group heading. Numbering runs straight through all
+ * groups rather than restarting, so "question 12" means one thing on the page.
+ *
+ * The section closes on a CTA panel rather than the one-line footnote it used
+ * to carry. Fifteen answers is enough to convince a visitor they have read the
+ * whole page, so the exit has to be as visible as the entrance — otherwise the
+ * people this section fails are exactly the ones who most need to reach you.
  */
-import { FAQ_ITEMS } from '../data/faq';
+import CTAButton from './CTAButton.astro';
+import { FAQ_GROUPS, FAQ_ITEMS, FAQ_OPEN_COUNT } from '../data/faq';
 
 interface Props {
   contactHref?: string;
@@ -28,6 +38,16 @@ const isDev = import.meta.env.DEV;
 // service area" as the answer. Fill the answer in and flip `status` to
 // 'confirmed' in src/data/faq.ts to publish one.
 const items = isDev ? FAQ_ITEMS : FAQ_ITEMS.filter((item) => item.status === 'confirmed');
+
+// Group in the order FAQ_GROUPS declares, dropping any group left empty by the
+// filter above. The running index is what keeps card numbers continuous.
+let counter = 0;
+const bands = FAQ_GROUPS.map((group) => ({
+  group,
+  entries: items
+    .filter((item) => item.group === group)
+    .map((item) => ({ item, index: counter++ })),
+})).filter((band) => band.entries.length > 0);
 ---
 
 <section class="faq-section" id="faq">
@@ -36,26 +56,56 @@ const items = isDev ? FAQ_ITEMS : FAQ_ITEMS.filter((item) => item.status === 'co
       <span class="section-label reveal">COMMON QUESTIONS</span>
       <h2 class="reveal">Before You Ask</h2>
       <p class="reveal">
-        The things people want to know before they pick up the phone. Anything else, ask us directly — we would
-        rather answer it properly.
+        Deposits, lead times, what the base price actually covers, and the things we cannot promise. These are
+        the answers we give on the phone, written down — so you can get to a decision without booking a call
+        first. Anything not covered here, ask us directly and we will answer it properly.
       </p>
     </div>
 
-    <div class="faq-grid">
-      {items.map((item, i) => (
-        <div class={`faq-item shape-${FACETS[i % FACETS.length]} reveal`}>
-          <span class="label-text faq-num">{String(i + 1).padStart(2, '0')}</span>
-          <div>
-            {item.status === 'todo' && isDev && <span class="faq-todo">Needs client answer</span>}
-            <h3 class="faq-q">{item.question}</h3>
-            <p class="faq-a">{item.answer}</p>
-          </div>
-        </div>
-      ))}
-    </div>
+    {isDev && FAQ_OPEN_COUNT > 0 && (
+      <p class="faq-dev-note">
+        DEV ONLY — {FAQ_OPEN_COUNT} question{FAQ_OPEN_COUNT === 1 ? '' : 's'} below still need a client answer.
+        They are badged in place and are stripped from production builds. Answer them in src/data/faq.ts and
+        flip `status` to 'confirmed' to publish.
+      </p>
+    )}
 
-    <p class="faq-footnote reveal">
-      Still have a question? <a href={contactHref}>Get in touch</a>.
-    </p>
+    {bands.map((band) => (
+      <div class="faq-band">
+        <h3 class="faq-band-title reveal">{band.group}</h3>
+
+        <div class="faq-grid">
+          {band.entries.map(({ item, index }) => (
+            <div
+              class={`faq-item shape-${FACETS[index % FACETS.length]} reveal${item.bullets ? ' faq-item-wide' : ''}${item.status === 'todo' ? ' faq-item-todo' : ''}`}
+            >
+              <span class="label-text faq-num">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                {item.status === 'todo' && isDev && <span class="faq-todo">Needs client answer</span>}
+                <h4 class="faq-q">{item.question}</h4>
+                <p class="faq-a">{item.answer}</p>
+                {item.bullets && (
+                  <ul class="faq-list">
+                    {item.bullets.map((bullet) => <li>{bullet}</li>)}
+                  </ul>
+                )}
+                {item.outro && <p class="faq-a faq-outro">{item.outro}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+
+    <div class="faq-cta shape-17 reveal">
+      <span class="label-text faq-cta-label">Didn't find your answer?</span>
+      <h3 class="faq-cta-title">Ask us directly.</h3>
+      <p class="faq-cta-body">
+        No event is standard, and the ones worth doing rarely fit a page like this. If your question is not
+        above — an unusual venue, a tight timeline, a guest count you are unsure about — send it over. The
+        consultation is free, it is normally a phone call or a Zoom, and there is no obligation attached to it.
+      </p>
+      <CTAButton href={contactHref}>Ask Your Question</CTAButton>
+    </div>
   </div>
 </section>

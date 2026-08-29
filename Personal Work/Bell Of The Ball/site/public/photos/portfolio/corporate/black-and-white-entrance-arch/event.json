@@ -1,0 +1,10 @@
+{
+  "title": "Black & White Entrance Arch",
+  "description": "A full-height arch in black, white, and printed balloons spanning a pair of banquet-room doors, with a black satin bow at the crown and weighted columns at both feet. Built as a threshold piece — guests walk through it rather than past it.",
+  "order": 25,
+  "cover": "entrance-arch-centered.jpg",
+  "alt": {
+    "entrance-arch-centered.jpg": "A black and white balloon arch spanning double banquet-room doors with a black satin bow at the crown",
+    "entrance-arch-wide.jpg": "A wide view of a black and white balloon arch framing the entrance to a banquet room"
+  }
+}

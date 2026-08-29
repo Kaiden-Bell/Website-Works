@@ -1,0 +1,10 @@
+{
+  "title": "Barnyard First Birthday",
+  "description": "A first birthday staged outdoors around a pink playhouse — hay bales, a whitewashed barrel, blush and white florals, and an oversized number one. Indoors it carries on as a soft-farm setup: an “adopt a pony” backdrop under a cream and cow-print garland, with plush ponies lined up on shelves for guests to take home and a wagon wheel and hay bale finishing the corner.",
+  "order": 40,
+  "shape": 15,
+  "alt": {
+    "barnyard-first-birthday.jpg": "A first birthday setup with a pink playhouse, hay bales, blush florals, and a large number one",
+    "adopt-a-pony-backdrop.jpg": "An Adopt a Pony backdrop under a cream, blush, and cow-print balloon garland, with plush ponies on shelves beside a wagon wheel and hay bale"
+  }
+}

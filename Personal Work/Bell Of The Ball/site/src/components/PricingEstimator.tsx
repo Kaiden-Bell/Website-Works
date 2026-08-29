@@ -22,6 +22,11 @@
  *  - Intl.NumberFormat(undefined) resolves to the server's locale during SSR
  *    and the visitor's in the browser, which can mismatch on hydration. Pinned
  *    to en-US.
+ *
+ * Options may declare `requires` (see src/data/pricing.ts). Such a row is
+ * hidden until one of the options it names is selected, and de-selects itself
+ * if that prerequisite is later removed — so an estimate can never carry extra
+ * machine supplies with no machine under them.
  */
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import {
@@ -29,6 +34,7 @@ import {
   EVENT_TYPES,
   PRICING_IS_PLACEHOLDER,
   type EventType,
+  type PricingOption,
 } from '../data/pricing';
 
 interface Props {
@@ -39,6 +45,13 @@ interface Props {
 
 const formatter = new Intl.NumberFormat('en-US');
 const formatPrice = (value: number) => `${CURRENCY}${formatter.format(value)}`;
+
+const keyFor = (eventName: string, optionName: string) => `${eventName}::${optionName}`;
+
+/** An option with no `requires`, or one whose prerequisites are satisfied. */
+const isUnlocked = (event: EventType, option: PricingOption, keys: string[]) =>
+  !option.requires?.length ||
+  option.requires.some((name) => keys.includes(keyFor(event.name, name)));
 
 export default function PricingEstimator({
   ctaHref = '/contact',
@@ -60,22 +73,36 @@ export default function PricingEstimator({
     [selectedName]
   );
 
+  // Rows offered for the current event: the unconditional ones, plus any whose
+  // prerequisite is currently selected.
+  const availableOptions = useMemo(() => {
+    if (!selectedEvent) return [];
+    return selectedEvent.options.filter((o) => isUnlocked(selectedEvent, o, selectedKeys));
+  }, [selectedEvent, selectedKeys]);
+
   const selectedOptions = useMemo(() => {
     if (!selectedEvent) return [];
-    return selectedEvent.options.filter((o) =>
-      selectedKeys.includes(`${selectedEvent.name}::${o.name}`)
+    return availableOptions.filter((o) =>
+      selectedKeys.includes(keyFor(selectedEvent.name, o.name))
     );
-  }, [selectedEvent, selectedKeys]);
+  }, [selectedEvent, availableOptions, selectedKeys]);
 
   const total = useMemo(() => {
     if (!selectedEvent) return 0;
-    return selectedEvent.basePrice + selectedOptions.reduce((sum, o) => sum + (o.price ?? 0), 0);
+    return selectedEvent.basePrice + selectedOptions.reduce(
+      // A rate row's price is per guest or per hour, and we don't know how
+      // many of either. Counting it once would read as the whole charge.
+      (sum, o) => sum + (o.rate ? 0 : o.price ?? 0),
+      0
+    );
   }, [selectedEvent, selectedOptions]);
 
   // The client scopes most work per event, and some add-ons are quoted rather
   // than fixed, so the figure is a floor — never presented as an exact price.
-  const hasVariableSelection = useMemo(
-    () => selectedOptions.some((o) => o.price === null),
+  // Rate rows count here too: they carry a real number that the total can't
+  // include, and the visitor needs telling why.
+  const hasUncountedSelection = useMemo(
+    () => selectedOptions.some((o) => o.price === null || o.rate),
     [selectedOptions]
   );
 
@@ -96,10 +123,18 @@ export default function PricingEstimator({
   const toggleOption = useCallback(
     (optionName: string) => {
       if (!selectedEvent) return;
-      const key = `${selectedEvent.name}::${optionName}`;
-      setSelectedKeys((prev) =>
-        prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
-      );
+      const key = keyFor(selectedEvent.name, optionName);
+      setSelectedKeys((prev) => {
+        const next = prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key];
+        // Removing a machine must also remove the supplies bought for it,
+        // rather than leaving a checked row that has just been hidden.
+        return next.filter((k) => {
+          const option = selectedEvent.options.find(
+            (o) => keyFor(selectedEvent.name, o.name) === k
+          );
+          return !option || isUnlocked(selectedEvent, option, next);
+        });
+      });
     },
     [selectedEvent]
   );
@@ -172,8 +207,9 @@ export default function PricingEstimator({
     <div className="pricing-estimator">
       {showPlaceholderNotice && PRICING_IS_PLACEHOLDER && (
         <p className="placeholder-banner">
-          TODO(client) — placeholder pricing. Replace src/data/pricing.ts with the confirmed tiers before
-          launch. This banner is dev-only and will not appear in a production build.
+          TODO(client) — the balloon arch and diaper cake figures still come from the guide rather than
+          from the client. Confirm them and flip PRICING_IS_PLACEHOLDER in src/data/pricing.ts. This
+          banner is dev-only and will not appear in a production build.
         </p>
       )}
 
@@ -235,8 +271,8 @@ export default function PricingEstimator({
             <p className="pe-empty">Choose an event type to see what can be added.</p>
           ) : (
             <div className="pe-addons">
-              {selectedEvent.options.map((option, i) => {
-                const key = `${selectedEvent.name}::${option.name}`;
+              {availableOptions.map((option, i) => {
+                const key = keyFor(selectedEvent.name, option.name);
                 const checked = selectedKeys.includes(key);
                 return (
                   <button
@@ -292,11 +328,19 @@ export default function PricingEstimator({
                   <div className="pe-line" key={`${selectedEvent.name}-${option.name}`}>
                     <span className="pe-line-label">
                       {option.name}
-                      {option.unit && <span className="pe-line-sub">Charged {option.unit}</span>}
+                      {option.unit ? (
+                        <span className="pe-line-sub">Charged {option.unit}</span>
+                      ) : (
+                        option.note && <span className="pe-line-sub">{option.note}</span>
+                      )}
                     </span>
                     <span className="pe-line-value">
                       {option.price === null ? (
                         <em className="pe-varies">Quoted per event</em>
+                      ) : option.rate ? (
+                        <em className="pe-varies">
+                          {formatPrice(option.price)} {option.unit}
+                        </em>
                       ) : (
                         formatPrice(option.price)
                       )}
@@ -313,8 +357,8 @@ export default function PricingEstimator({
               <span className="pe-from">From</span> {formatPrice(total)}
             </p>
             <p className="pe-total-note">
-              {hasVariableSelection
-                ? 'Starting figure only — items marked “Varies” are quoted per event and are not counted here. Your real number comes out of the consultation.'
+              {hasUncountedSelection
+                ? 'Starting figure only — anything quoted per event, or charged by the guest or the hour, is listed above but not counted here. Your real number comes out of the consultation.'
                 : 'A starting figure, not a quote. Most work is scoped per event; your real number comes out of the consultation.'}
             </p>
           </div>
