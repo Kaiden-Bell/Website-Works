@@ -1,4 +1,6 @@
 ---
+import { SITE_SLOGAN } from '../data/site';
+
 const year = new Date().getFullYear();
 // TODO(client): replace with the real inbox — no business email is confirmed yet.
 const CONTACT_EMAIL = 'hello@belloftheball.example';
@@ -6,7 +8,10 @@ const CONTACT_EMAIL = 'hello@belloftheball.example';
 
 <footer class="footer">
   <div class="footer-content">
-    <p>&copy; {year} Bell of the Ball. All rights reserved.</p>
+    <p class="footer-brand">
+      <span class="footer-slogan">{SITE_SLOGAN}</span>
+      <span>&copy; {year} Bell of the Ball. All rights reserved.</span>
+    </p>
     <div class="footer-links">
       <a href="https://www.facebook.com/profile.php?id=100095562942212" target="_blank" rel="noopener">Facebook</a>
       <a href="https://www.instagram.com/belloftheballinc/" target="_blank" rel="noopener">Instagram</a>

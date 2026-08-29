@@ -10,41 +10,47 @@
  * does update the URL hash so a specific event can be linked and so the
  * browser Back button closes it, which is what people expect from a modal
  * that changed the address bar.
+ *
+ * The lightbox shows one photograph at a time. Visitors reported that the
+ * earlier collage gave them no way to step through an event, so it now carries
+ * previous/next arrows, ArrowLeft/ArrowRight keys, a position counter, and a
+ * thumbnail rail for jumping. Navigation wraps at both ends.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  PORTFOLIO_CATEGORIES,
-  PORTFOLIO_EVENTS,
-  type PortfolioCategory,
-  type PortfolioEvent,
-} from '../data/portfolio';
+import type { PortfolioCategory, PortfolioEvent } from '../data/portfolio-types';
 
 type Filter = PortfolioCategory | 'All';
 
-export default function PortfolioGrid() {
+interface Props {
+  /** Built from the folder tree at build time — see src/data/portfolio.ts. */
+  events: PortfolioEvent[];
+  categories: Filter[];
+}
+
+export default function PortfolioGrid({ events, categories }: Props) {
   const [active, setActive] = useState<Filter>('All');
   const [openSlug, setOpenSlug] = useState<string | null>(null);
 
   const visible = useMemo(
-    () => (active === 'All' ? PORTFOLIO_EVENTS : PORTFOLIO_EVENTS.filter((e) => e.category === active)),
-    [active]
+    () => (active === 'All' ? events : events.filter((e) => e.category === active)),
+    [active, events]
   );
 
   const openEvent = useMemo(
-    () => PORTFOLIO_EVENTS.find((e) => e.slug === openSlug) ?? null,
-    [openSlug]
+    () => events.find((e) => e.slug === openSlug) ?? null,
+    [openSlug, events]
   );
 
   // Deep-link support: honour an incoming #event-slug, and follow Back/Forward.
   useEffect(() => {
     const fromHash = () => {
       const slug = window.location.hash.replace(/^#/, '');
-      setOpenSlug(PORTFOLIO_EVENTS.some((e) => e.slug === slug) ? slug : null);
+      setOpenSlug(events.some((e) => e.slug === slug) ? slug : null);
     };
     fromHash();
     window.addEventListener('hashchange', fromHash);
     return () => window.removeEventListener('hashchange', fromHash);
-  }, []);
+  }, [events]);
 
   const open = useCallback((slug: string) => {
     window.location.hash = slug;
@@ -60,7 +66,7 @@ export default function PortfolioGrid() {
   return (
     <div>
       <div className="pf-filters">
-        {PORTFOLIO_CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <button
             key={cat}
             type="button"
@@ -104,6 +110,16 @@ export default function PortfolioGrid() {
 function Lightbox({ event, onClose }: { event: PortfolioEvent; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
+  const thumbRailRef = useRef<HTMLDivElement | null>(null);
+
+  const all = useMemo(() => [event.cover, ...event.photos], [event]);
+  const [index, setIndex] = useState(0);
+
+  // Wrap at both ends: from the last photo, Next returns to the first.
+  const step = useCallback(
+    (delta: number) => setIndex((i) => (i + delta + all.length) % all.length),
+    [all.length]
+  );
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -115,6 +131,11 @@ function Lightbox({ event, onClose }: { event: PortfolioEvent; onClose: () => vo
       if (e.key === 'Escape') {
         e.preventDefault();
         onClose();
+        return;
+      }
+      if (all.length > 1 && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        e.preventDefault();
+        step(e.key === 'ArrowLeft' ? -1 : 1);
         return;
       }
       if (e.key !== 'Tab') return;
@@ -140,9 +161,21 @@ function Lightbox({ event, onClose }: { event: PortfolioEvent; onClose: () => vo
       document.removeEventListener('keydown', onKeyDown);
       document.body.style.overflow = previousOverflow;
     };
-  }, [onClose]);
+  }, [onClose, step, all.length]);
 
-  const all = [event.cover, ...event.photos];
+  // Keep the active thumbnail in view as the visitor steps past the rail's edge.
+  // Setting scrollLeft directly rather than calling scrollIntoView: the latter
+  // also scrolls every scrollable ancestor, which on open dragged the overlay
+  // down far enough to hide the event title.
+  useEffect(() => {
+    const rail = thumbRailRef.current;
+    const active = rail?.querySelector<HTMLElement>('[data-active="true"]');
+    if (!rail || !active) return;
+    rail.scrollLeft = active.offsetLeft - (rail.clientWidth - active.clientWidth) / 2;
+  }, [index]);
+
+  const current = all[index];
+  const hasMany = all.length > 1;
 
   return (
     <div className="pf-overlay" onClick={onClose}>
@@ -166,18 +199,61 @@ function Lightbox({ event, onClose }: { event: PortfolioEvent; onClose: () => vo
           <h3 id={`${event.slug}-title`} className="pf-panel-title">
             {event.title}
           </h3>
-          <p className="pf-panel-desc">{event.description}</p>
+          {event.description && <p className="pf-panel-desc">{event.description}</p>}
         </div>
 
-        <div className="pf-panel-photos">
-          {all.map((photo, i) => (
-            <figure key={photo.src} className={`pf-photo shape-${((event.shape + i) % 6) + 13}`}>
-              <img src={photo.src} alt={photo.alt} loading="lazy" />
-            </figure>
-          ))}
+        <div className="pf-stage">
+          {hasMany && (
+            <button
+              type="button"
+              className="pf-arrow pf-arrow-prev"
+              onClick={() => step(-1)}
+              aria-label="Previous photograph"
+            >
+              <span aria-hidden="true">←</span>
+            </button>
+          )}
+
+          <figure className="pf-stage-figure">
+            {/* Keyed on src so a changed photo fades in rather than swapping hard. */}
+            <img key={current.src} src={current.src} alt={current.alt} />
+          </figure>
+
+          {hasMany && (
+            <button
+              type="button"
+              className="pf-arrow pf-arrow-next"
+              onClick={() => step(1)}
+              aria-label="Next photograph"
+            >
+              <span aria-hidden="true">→</span>
+            </button>
+          )}
         </div>
 
-        {all.length === 1 && (
+        {hasMany ? (
+          <>
+            <p className="label-text pf-counter" aria-live="polite">
+              {index + 1} / {all.length}
+            </p>
+
+            <div className="pf-thumbs" ref={thumbRailRef}>
+              {all.map((photo, i) => (
+                <button
+                  key={photo.src}
+                  type="button"
+                  className="pf-thumb"
+                  data-active={i === index}
+                  aria-current={i === index}
+                  aria-label={`Photograph ${i + 1} of ${all.length}`}
+                  onClick={() => setIndex(i)}
+                >
+                  <img src={photo.src} alt="" loading="lazy" />
+                </button>
+              ))}
+            </div>
+          </>
+        ) : (
           <p className="pf-panel-note">More photographs from this event are being added.</p>
         )}
       </div>

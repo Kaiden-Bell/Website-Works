@@ -3,8 +3,12 @@ import Layout from '../layouts/Layout.astro';
 import CTAButton from '../components/CTAButton.astro';
 import FAQSection from '../components/FAQSection.astro';
 import PricingEstimator from '../components/PricingEstimator.tsx';
+import { FAQ_ITEMS } from '../data/faq';
 
 const isDev = import.meta.env.DEV;
+
+// Counted, not typed: the number moves whenever src/data/faq.ts does.
+const answerCount = FAQ_ITEMS.filter((item) => item.status === 'confirmed').length;
 ---
 
 <Layout
@@ -32,6 +36,20 @@ const isDev = import.meta.env.DEV;
       <PricingEstimator client:visible showPlaceholderNotice={isDev} />
     </div>
   </section>
+
+  <!--
+    The estimator answers "what does it cost" and then leaves people with the
+    questions it cannot answer — deposits, lead time, what the base covers.
+    Those answers are already on this page, just several screens down, so this
+    is the signpost that stops the visitor emailing to ask instead.
+  -->
+  <a class="scroll-cue reveal" href="#faq">
+    <span class="label-text scroll-cue-label">Still have questions?</span>
+    <span class="scroll-cue-lead">
+      {answerCount} answers below — deposits, lead times, what the base price covers, and more.
+    </span>
+    <span class="scroll-cue-arrow" aria-hidden="true">↓</span>
+  </a>
 
   <FAQSection />
 

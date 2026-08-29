@@ -53,6 +53,13 @@ const principles = [
           alt="A sweetheart table with floating candles, blue and white florals, and a wooden Mr. and Mrs. sign"
         />
       </div>
+
+      <img
+        class="about-intro-second shape-12 reveal"
+        src="/photos/about/gala-ballroom-guests.jpg"
+        alt="A ballroom filled with seated guests at a formal gala under a chandelier"
+        loading="lazy"
+      />
     </div>
   </section>
 
@@ -62,21 +69,25 @@ const principles = [
     contains a couples photo whose subjects don't obviously match the
     individually-named files, so the labels below are unverified.
   -->
-  <section class="about">
+  <section class="about team-section">
     <div class="about-container">
       <span class="section-label reveal">WHO YOU'LL WORK WITH</span>
-      <h2 class="reveal" style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; margin: 1rem 0 3rem; max-width: 20ch;">
+      <h2 class="reveal" style="font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; margin: 1rem auto 3rem; max-width: 20ch;">
         The same two people, start to finish.
       </h2>
 
-      <div class="team-grid">
+      <div class="team-grid" data-parallax-scope>
         <figure class="reveal">
-          <img
-            class="team-portrait shape-15"
-            src="/photos/headshots/founder-portrait.jpg"
-            alt="Portrait of the founder of Bell of the Ball"
-            loading="lazy"
-          />
+          <div class="team-lightbox" data-parallax-depth="1">
+            <div class="team-portrait-frame shape-15">
+              <img
+                class="team-portrait"
+                src="/photos/headshots/founder-portrait.jpg"
+                alt="Portrait of the founder of Bell of the Ball"
+                loading="lazy"
+              />
+            </div>
+          </div>
           <figcaption>
             <p class="team-name">Christa Bell</p>
             <span class="label-text team-role">FOUNDER</span>
@@ -84,12 +95,16 @@ const principles = [
         </figure>
 
         <figure class="reveal delay-1">
-          <img
-            class="team-portrait shape-16"
-            src="/photos/headshots/cofounder-portrait.jpg"
-            alt="Portrait of the co-founder of Bell of the Ball"
-            loading="lazy"
-          />
+          <div class="team-lightbox" data-parallax-depth="0.65">
+            <div class="team-portrait-frame shape-16">
+              <img
+                class="team-portrait"
+                src="/photos/headshots/cofounder-portrait.jpg"
+                alt="Portrait of the co-founder of Bell of the Ball"
+                loading="lazy"
+              />
+            </div>
+          </div>
           <figcaption>
             <p class="team-name">Kevin Bell</p>
             <span class="label-text team-role">CO-FOUNDER</span>

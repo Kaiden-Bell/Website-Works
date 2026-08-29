@@ -10,18 +10,57 @@ interface Props {
 
 const {
   title,
-  description = "Premium event design & full-service party planning. Vibrant, bespoke experiences by Bell of the Ball.",
+  description = "We Love To Party. Premium event design & full-service party planning in Reno, Sparks, and Carson City, by Bell of the Ball.",
   ogImage = '/photos/hero/church-garland-arch.jpg',
 } = Astro.props;
 
 const canonicalOgImage = new URL(ogImage, Astro.site ?? Astro.url).toString();
 
+/*
+ * The sidebar rail used to print each label in `writing-mode: vertical-rl`,
+ * which meant reading the navigation required tilting your head. The rail now
+ * shows an upright index number per entry, and hovering (or tab-focusing) one
+ * opens a flyout carrying the full label and a line about what's behind it —
+ * so the rail stays 60px wide without the copy going sideways.
+ *
+ * `blurb` is nav copy, not page content: one sentence, written to orient
+ * someone who has not visited the page yet.
+ */
 const navItems = [
-  { href: '/about', label: 'ABOUT' },
-  { href: '/services', label: 'SERVICES' },
-  { href: '/portfolio', label: 'PORTFOLIO' },
-  { href: '/pricing', label: 'PRICING' },
-  { href: '/contact', label: 'CONTACT' },
+  {
+    href: '/about',
+    label: 'ABOUT',
+    blurb: 'One partner for the whole event, and the two people who run it.',
+  },
+  {
+    href: '/services',
+    label: 'SERVICES',
+    blurb:
+      'Event design and planning, officiating, notary, organic balloons, and concession rentals.',
+  },
+  {
+    href: '/portfolio',
+    label: 'PORTFOLIO',
+    blurb: 'Weddings, corporate productions, celebrations, and rentals we have built.',
+  },
+  {
+    // The FAQ lives at the bottom of /pricing, several scrolls deep. Naming it
+    // in the rail is how anyone finds it without already knowing it is there.
+    href: '/pricing',
+    label: 'PRICING & FAQS',
+    blurb:
+      'Build an estimate in seconds, then read the answers to everything people ask before booking.',
+  },
+  {
+    href: '/contact',
+    label: 'CONTACT',
+    blurb: 'Book the consultation. That conversation is where every event starts.',
+  },
+];
+
+const team = [
+  { name: 'Christa Bell', role: 'FOUNDER' },
+  { name: 'Kevin Bell', role: 'CO-FOUNDER' },
 ];
 ---
 
@@ -49,11 +88,40 @@ const navItems = [
   </head>
   <body>
     <!-- Sidebar Navigation -->
-    <nav class="sidebar-nav">
-      <a href="/" class="logo">BOTB</a>
+    <nav class="sidebar-nav" aria-label="Primary">
+      <div class="nav-item nav-item-logo">
+        <a href="/" class="logo" aria-label="Bell of the Ball — home">BOTB</a>
+        <div class="nav-flyout nav-flyout-brand" role="presentation">
+          <img class="nav-flyout-mark" src="/favicon.svg" alt="" width="44" height="44" />
+          <p class="nav-flyout-title">Bell of the Ball</p>
+          <p class="nav-flyout-body">
+            Full-service event planning and rentals — one point of contact from first concept
+            through final teardown.
+          </p>
+          <ul class="nav-flyout-team">
+            {team.map((person) => (
+              <li>
+                <span class="nav-flyout-name">{person.name}</span>
+                <span class="label-text">{person.role}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
       <ul class="nav-links">
-        {navItems.map((item) => (
-          <li><a href={item.href} class="nav-link">{item.label}</a></li>
+        {navItems.map((item, i) => (
+          <li class="nav-item">
+            <a href={item.href} class="nav-link">
+              <span class="nav-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="nav-sr">{item.label}</span>
+            </a>
+            <div class="nav-flyout" role="presentation">
+              <span class="label-text">{String(i + 1).padStart(2, '0')}</span>
+              <p class="nav-flyout-title">{item.label}</p>
+              <p class="nav-flyout-body">{item.blurb}</p>
+            </div>
+          </li>
         ))}
       </ul>
     </nav>

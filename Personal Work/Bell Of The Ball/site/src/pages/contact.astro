@@ -1,11 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import CTAButton from '../components/CTAButton.astro';
-
-// TODO(client): replace with the real inbox and phone number before launch —
-// no business email or phone is confirmed in PRODUCT.md yet.
-const CONTACT_EMAIL = 'hello@belloftheball.example';
-const CONTACT_PHONE = '';
+import ContactForm from '../components/ContactForm.astro';
+import { CONTACT_EMAIL, CONTACT_PHONE } from '../data/site';
 ---
 
 <Layout title="Contact | Bell of the Ball" description="Book a consultation with Bell of the Ball — one partner for event design, officiating, balloon artistry, and concession rentals.">
@@ -18,7 +15,7 @@ const CONTACT_PHONE = '';
       <p class="hero-tagline reveal" style="max-width: 420px;">
         Tell us the date, the scale, and the vision. We'll follow up to schedule your consultation.
       </p>
-      <CTAButton href={`mailto:${CONTACT_EMAIL}`} class="reveal">Email Us</CTAButton>
+      <CTAButton href="#request" class="reveal">Request a Consultation</CTAButton>
     </div>
     <div class="hero-media-wrapper reveal-right" style="width: 28vw; height: 60vh;">
       <img
@@ -29,7 +26,16 @@ const CONTACT_PHONE = '';
     </div>
   </section>
 
-  <section class="about">
+  <section class="about" id="request">
+    <div class="about-container">
+      <span class="section-label reveal">REQUEST A CONSULTATION</span>
+      <div class="cf-wrap reveal">
+        <ContactForm />
+      </div>
+    </div>
+  </section>
+
+  <section class="about" style="background-color: var(--color-parchment);">
     <div class="about-container">
       <span class="section-label reveal">REACH US</span>
       <div style="display: flex; flex-wrap: wrap; gap: 4rem; max-width: 720px;">

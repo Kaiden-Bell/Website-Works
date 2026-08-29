@@ -2,6 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import CTAButton from '../components/CTAButton.astro';
 import PortfolioGrid from '../components/PortfolioGrid.tsx';
+import { loadPortfolio } from '../data/portfolio';
+
+// Read at build time from public/photos/portfolio/<category>/<event>/.
+const { events, categories } = loadPortfolio();
 ---
 
 <Layout title="Portfolio | Bell of the Ball" description="Selected work from Bell of the Ball — weddings, corporate launches, and celebrations, spanning event design, officiating, and organic balloon artistry.">
@@ -9,7 +13,7 @@ import PortfolioGrid from '../components/PortfolioGrid.tsx';
     <div class="portfolio-container">
       <span class="section-label reveal">ARCHIVE</span>
       <h1 class="portfolio-title reveal">Selected Works</h1>
-      <PortfolioGrid client:visible />
+      <PortfolioGrid events={events} categories={categories} client:visible />
     </div>
   </section>
 

@@ -28,7 +28,17 @@
   color: var(--color-warm-taupe);
 }
 
-/* Sidebar Navigation */
+/* Sidebar Navigation
+   ------------------------------------------------------------------------
+   The rail is an index, not a label list. Each entry prints an upright number;
+   the words live in a flyout that opens on hover or keyboard focus. That's what
+   removed the old `writing-mode: vertical-rl` rotation, which forced visitors
+   to tilt their heads to read the navigation.
+
+   Because the rail no longer holds a column of sideways words, its height is a
+   function of item count rather than character count, so the scroll fallback
+   that used to keep CONTACT reachable on short laptops is gone — and with it
+   the `overflow` that would have clipped the flyouts. */
 .sidebar-nav {
   position: fixed;
   top: 0;
@@ -43,54 +53,176 @@
   padding: 2rem 0;
   z-index: 100;
   background-color: var(--color-parchment);
-  /* Vertical rotated labels make this rail's height a function of how many
-     characters the nav holds, not how many items. Five entries overflow a
-     short laptop viewport at the original 3rem gap, which pushed CONTACT
-     off-screen entirely — hence the tightened gaps below and this scroll
-     fallback, which keeps every link reachable at any height. */
-  overflow-y: auto;
-  scrollbar-width: none;
 }
-
-.sidebar-nav::-webkit-scrollbar { display: none; }
 
 .sidebar-nav .logo {
+  display: block;
   writing-mode: vertical-rl;
-  transform: rotate(180deg);
+  text-orientation: upright;
   color: var(--color-warm-ink);
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   text-decoration: none;
+  transition: color var(--transition-fast);
 }
+
+.sidebar-nav .logo:hover { color: var(--color-ochre-rust); }
 
 .nav-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
-  align-items: center;
+  gap: 1.25rem;
+  align-self: stretch;
 }
 
-/* Short viewports (a 13" laptop lands near 700px) tighten further. */
-@media (max-height: 780px) {
-  .nav-links { gap: 1rem; }
-  .sidebar-nav { padding: 1.25rem 0; }
-}
-
-.nav-links li {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
+/* Full rail width, not shrink-to-fit around "01". The flyout is positioned at
+   `left: 100%`, so the item has to span the rail or the panel opens on top of
+   the numbers instead of beside them. */
+.nav-item,
+.nav-item-logo {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
 }
 
 .nav-link {
+  display: block;
   text-decoration: none;
   transition: color var(--transition-fast);
-  padding: 10px 0;
+  padding: 6px 0;
+}
+
+.nav-index {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
 }
 
 .nav-link:hover,
 .nav-link.active {
   color: var(--color-ochre-rust);
+}
+
+/* The current page keeps a permanent marker, since the rail's own text is only
+   a number and hover is the only other signal. */
+.nav-link.active::after {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 1px;
+  margin: 4px auto 0;
+  background-color: var(--color-ochre-rust);
+}
+
+/* Visually hidden, still read aloud — the rail shows "01", assistive tech and
+   the browser's link list get "ABOUT". */
+.nav-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Rail flyouts --- */
+.nav-flyout {
+  position: absolute;
+  left: calc(100% + 1px);
+  top: 50%;
+  transform: translate(-8px, -50%);
+  width: 20rem;
+  padding: 1.5rem 1.75rem;
+  background-color: var(--color-paper-white);
+  border: 1px solid color-mix(in srgb, var(--color-bottle-green) 14%, transparent);
+  box-shadow: 0 18px 44px -28px color-mix(in srgb, var(--color-warm-ink) 60%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast),
+    visibility var(--transition-fast);
+  z-index: 1;
+}
+
+/* The brand panel hangs from the top of the rail rather than centring on a
+   single-line link. */
+.nav-flyout-brand {
+  top: 0;
+  transform: translate(-8px, -0.5rem);
+}
+
+/* The rail puts the link list at the BOTTOM of the viewport (the nav is a
+   space-between column), so a flyout centred on its link would hang off the
+   bottom edge for the last entries. Anchoring the panel's bottom to the link's
+   instead makes it grow upward, which is always on-screen whatever the
+   viewport height. */
+.nav-links .nav-flyout {
+  top: auto;
+  bottom: -0.5rem;
+  transform: translate(-8px, 0);
+}
+
+.nav-item:hover > .nav-flyout,
+.nav-item:focus-within > .nav-flyout {
+  opacity: 1;
+  visibility: visible;
+}
+
+.nav-links .nav-item:hover > .nav-flyout,
+.nav-links .nav-item:focus-within > .nav-flyout {
+  transform: translate(0, 0);
+}
+
+.nav-item-logo:hover > .nav-flyout-brand,
+.nav-item-logo:focus-within > .nav-flyout-brand {
+  transform: translate(0, -0.5rem);
+}
+
+.nav-flyout-mark {
+  display: block;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 1rem;
+}
+
+.nav-flyout-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.15;
+  color: var(--color-warm-ink);
+  margin: 0.5rem 0 0.6rem;
+}
+
+.nav-flyout-body {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--color-warm-taupe);
+}
+
+.nav-flyout-team {
+  list-style: none;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-bottle-green) 12%, transparent);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.nav-flyout-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-warm-ink);
+}
+
+/* Short viewports (a 13" laptop lands near 700px) tighten the rail. */
+@media (max-height: 780px) {
+  .nav-links { gap: 0.85rem; }
+  .sidebar-nav { padding: 1.25rem 0; }
 }
 
 /* Mobile Nav */
@@ -294,6 +426,18 @@
   font-size: 1.1rem;
   margin-bottom: 1.5rem;
   color: var(--color-warm-taupe);
+}
+
+/* About intro — a second, staggered photo pulled up under the intro row so the
+   band between that row and the next section isn't dead space. */
+.about-intro-second {
+  display: block;
+  width: min(680px, 58%);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background-color: var(--color-bottle-green);
+  margin: -11rem 0 0 7%;
+  transition: clip-path var(--transition-slow);
 }
 
 .about-media-blocks {
@@ -504,6 +648,21 @@
   font-size: 0.9rem;
 }
 
+/* The slogan leads, the legal line sits under it in the same taupe. Stacking
+   rather than inlining keeps the footer's single row intact at every width. */
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.footer-slogan {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: var(--color-bottle-green);
+}
+
 .footer-links a {
   color: var(--color-warm-taupe);
   text-decoration: none;
@@ -555,22 +714,71 @@
 /* ==========================================================================
    About — Team portraits
    ========================================================================== */
+.team-section .about-container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
 .team-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 3rem;
   max-width: 720px;
+  margin: 0 auto;
+}
+
+/* The lightbox is a lit panel the portrait sits inside — it is the element the
+   pointer parallax moves, so the photo, its cut-corner frame, and the panel all
+   drift together as one object. The cast shadow shifts against the drift, which
+   is what sells the panel as floating above the page. */
+.team-lightbox {
+  --parallax-x: 0px;
+  --parallax-y: 0px;
+  position: relative;
+  isolation: isolate;
+  padding: 1.15rem 1.15rem 1.25rem;
+  margin-bottom: 1.25rem;
+  background: linear-gradient(170deg, #ffffff 0%, #fdfaf3 55%, #f7f1e4 100%);
+  box-shadow:
+    0 0 0 1px rgba(122, 103, 72, 0.14),
+    calc(var(--parallax-x) * -0.55) calc(var(--parallax-y) * -0.55 + 26px) 55px -24px rgba(34, 29, 21, 0.55),
+    0 0 90px -12px rgba(168, 103, 42, 0.38);
+  transform: translate3d(var(--parallax-x), var(--parallax-y), 0);
+  will-change: transform;
+}
+
+/* Sheen across the panel, angled by the same pointer offset. */
+.team-lightbox::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: 0.35;
+  transform: translate3d(calc(var(--parallax-x) * -1.6), 0, 0);
+}
+
+/* The frame owns the cut-corner shape and clips the photo to it. */
+.team-portrait-frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background-color: var(--color-bottle-green);
+  transition: clip-path var(--transition-slow);
 }
 
 .team-portrait {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  height: 100%;
   object-fit: cover;
   object-position: center 22%;
   display: block;
-  background-color: var(--color-bottle-green);
-  margin-bottom: 1.25rem;
-  transition: clip-path var(--transition-slow);
 }
 
 .team-name {
@@ -689,6 +897,50 @@
 }
 
 /* ==========================================================================
+   Scroll cue — /pricing, between the estimator and the FAQ
+   ========================================================================== */
+.scroll-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 3.5rem 2rem 4.5rem;
+  background-color: var(--color-parchment);
+  text-decoration: none;
+  text-align: center;
+  transition: background-color var(--transition-fast);
+}
+
+.scroll-cue:hover { background-color: color-mix(in srgb, var(--color-ochre-rust) 7%, var(--color-parchment)); }
+
+.scroll-cue-label { color: var(--color-ochre-rust); }
+
+.scroll-cue-lead {
+  max-width: 46ch;
+  color: var(--color-warm-taupe);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.scroll-cue-arrow {
+  margin-top: 0.75rem;
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--color-ochre-rust);
+  animation: scroll-cue-bob 2.1s var(--ease-organic) infinite;
+}
+
+@keyframes scroll-cue-bob {
+  0%, 100% { transform: translateY(0); opacity: 0.65; }
+  50% { transform: translateY(7px); opacity: 1; }
+}
+
+.scroll-cue:focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: -4px;
+}
+
+/* ==========================================================================
    FAQ
    ========================================================================== */
 .faq-section {
@@ -712,11 +964,59 @@
   max-width: 52ch;
 }
 
+/* Group bands. The head already carries the section's label and heading, so a
+   band title is a quieter third level rather than another display heading. */
+.faq-band + .faq-band { margin-top: 3.5rem; }
+
+.faq-band-title {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-ochre-rust);
+  padding-bottom: 0.85rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-bottle-green) 12%, transparent);
+}
+
 .faq-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
+  align-items: start;
 }
+
+/* An answer with a contents list is several times the height of a normal card;
+   in one column of a two-column row it would stretch its neighbour to match. */
+.faq-item-wide { grid-column: 1 / -1; }
+
+.faq-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.faq-list li {
+  position: relative;
+  padding-left: 1.25rem;
+  color: var(--color-warm-taupe);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.faq-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 8px;
+  height: 1px;
+  background-color: var(--color-ochre-rust);
+}
+
+.faq-outro { margin-top: 1rem; }
 
 .faq-item {
   background-color: var(--color-parchment);
@@ -755,16 +1055,55 @@
   margin-bottom: 0.6rem;
 }
 
-.faq-footnote {
-  margin-top: 3rem;
-  color: var(--color-warm-taupe);
-  font-size: 1rem;
+/* Dev-only ledger of what the client still owes an answer on. Loud on purpose;
+   it never reaches a production build. */
+.faq-dev-note {
+  margin-bottom: 2.5rem;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--color-bottle-green);
+  background-color: color-mix(in srgb, var(--color-bottle-green) 8%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.7;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-bottle-green);
 }
 
-.faq-footnote a {
-  color: var(--color-ochre-rust);
-  text-decoration: none;
-  border-bottom: 1px solid currentColor;
+.faq-item-todo {
+  background-color: color-mix(in srgb, var(--color-bottle-green) 10%, var(--color-parchment));
+}
+
+/* Closing CTA. The section is long enough that a visitor who reaches the end
+   has read a lot and found nothing — this is the one who most needs a way to
+   reach a person, so it gets a panel rather than a line of text. */
+.faq-cta {
+  margin-top: 4.5rem;
+  padding: 3.5rem;
+  background-color: var(--color-bottle-green);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.faq-cta-label { color: color-mix(in srgb, var(--color-parchment) 70%, transparent); }
+
+.faq-cta-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--color-paper-white);
+  margin: 1rem 0 1.25rem;
+}
+
+.faq-cta-body {
+  max-width: 56ch;
+  margin-bottom: 2.5rem;
+  color: color-mix(in srgb, var(--color-parchment) 82%, transparent);
+  font-size: 1.05rem;
+  line-height: 1.65;
 }
 
 /* ==========================================================================
@@ -1128,9 +1467,9 @@
   z-index: 200;
   background-color: color-mix(in srgb, var(--color-warm-ink) 88%, transparent);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 2rem;
   overflow-y: auto;
   animation: pf-fade 0.32s var(--ease-organic);
 }
@@ -1140,8 +1479,12 @@
 .pf-panel {
   position: relative;
   width: min(1100px, 100%);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
   background-color: var(--color-parchment);
-  padding: 3.5rem;
+  padding: 2.5rem 3rem 2rem;
   animation: pf-rise 0.4s var(--ease-organic);
 }
 
@@ -1174,40 +1517,141 @@
 }
 
 .pf-panel-head {
+  flex: none;
   max-width: 60ch;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
+/* Deliberately smaller than a page heading: in the viewer the photograph is
+   the subject, and every pixel the head takes comes straight out of the
+   stage's height. */
 .pf-panel-title {
-  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-size: clamp(1.75rem, 2.6vw, 2.5rem);
   line-height: 1.1;
-  margin: 1rem 0 1.25rem;
+  margin: 0.6rem 0 0.75rem;
 }
 
 .pf-panel-desc {
   color: var(--color-warm-taupe);
-  font-size: 1.1rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
-.pf-panel-photos {
+/* One photograph at a time, flanked by the step arrows. The arrow columns are
+   fixed so the stage doesn't shift width between a single-photo event (no
+   arrows) and a multi-photo one. */
+.pf-stage {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 3.5rem minmax(0, 1fr) 3.5rem;
+  /* minmax(0, 1fr), not auto: the row must take its height from the flex
+     column above rather than from the photograph, or the image has nothing
+     definite to cap its own max-height against and overflows the panel. */
+  grid-template-rows: minmax(0, 1fr);
+  gap: 1rem;
+  flex: 1 1 auto;
+  min-height: 200px;
 }
 
-.pf-photo { overflow: hidden; background-color: var(--color-bottle-green); }
+/* The figure is the available box; the photograph is centred inside it at its
+   own aspect ratio. Stretching it to the box and relying on object-fit left
+   wide bars of backdrop on either side of every landscape shot. */
+.pf-stage-figure {
+  grid-column: 2;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-.pf-photo img {
+.pf-stage-figure img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  /* Stands in while the photograph decodes. */
+  background-color: var(--color-bottle-green);
+  animation: pf-photo-in 0.32s var(--ease-organic);
+}
+
+@keyframes pf-photo-in { from { opacity: 0; } to { opacity: 1; } }
+
+.pf-arrow {
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--color-bottle-green) 20%, transparent);
+  background: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: var(--color-warm-ink);
+  transition: color var(--transition-fast), background-color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.pf-arrow-prev { grid-column: 1; justify-self: start; align-self: center; }
+.pf-arrow-next { grid-column: 3; justify-self: end; align-self: center; }
+
+.pf-arrow:hover {
+  background-color: var(--color-ochre-rust);
+  border-color: var(--color-ochre-rust);
+  color: var(--color-paper-white);
+}
+
+.pf-arrow:focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: 3px;
+}
+
+.pf-counter {
+  flex: none;
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
+/* Thumbnail rail. Scrolls horizontally once an event outgrows the panel. */
+.pf-thumbs {
+  flex: none;
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.pf-thumb {
+  flex: 0 0 auto;
+  width: 84px;
+  height: 60px;
+  padding: 0;
+  border: 1px solid transparent;
+  background-color: var(--color-bottle-green);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast), border-color var(--transition-fast);
+}
+
+.pf-thumb img {
   display: block;
   width: 100%;
-  height: 46vh;
-  min-height: 280px;
+  height: 100%;
   object-fit: cover;
 }
 
-/* A lone cover shouldn't stretch to fill the whole panel width. */
-.pf-panel-photos:has(> .pf-photo:only-child) { grid-template-columns: minmax(0, 620px); }
+.pf-thumb:hover { opacity: 0.85; }
+
+.pf-thumb[data-active='true'] {
+  opacity: 1;
+  border-color: var(--color-ochre-rust);
+}
+
+.pf-thumb:focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: 2px;
+}
 
 .pf-panel-note {
   margin-top: 2rem;
@@ -1218,10 +1662,27 @@
 
 @media (max-width: 768px) {
   .pf-overlay { padding: 0; }
-  .pf-panel { padding: 4.5rem 1.5rem 3rem; min-height: 100%; }
+  .pf-panel { padding: 4.5rem 1.25rem 2rem; height: 100%; max-height: none; }
   .pf-grid { gap: 2.5rem 1.5rem; }
   .pf-tile-media img { height: 34vh; }
-  .pf-photo img { height: 32vh; min-height: 200px; }
+
+  /* Reclaim the arrow gutters: stack everything in one column and float the
+     arrows over the photo's lower corners. */
+  .pf-stage {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    position: relative;
+    min-height: 200px;
+  }
+  .pf-stage-figure { grid-column: 1; grid-row: 1; }
+  .pf-arrow {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: end;
+    margin: 0.75rem;
+    background-color: color-mix(in srgb, var(--color-parchment) 90%, transparent);
+  }
+  .pf-thumb { width: 68px; height: 48px; }
 }
 
 /* ==========================================================================
@@ -1234,17 +1695,24 @@
     -webkit-mask-image: none;
     mask-image: none;
   }
+  .scroll-cue-arrow { animation: none; opacity: 1; }
   .pe-addon,
   .pe-line,
   .pe-listbox,
   .pf-overlay,
-  .pf-panel { animation: none; }
+  .pf-panel,
+  .pf-stage-figure img { animation: none; }
   .pf-tile:hover .pf-tile-media img { transform: none; }
   .reveal, .reveal-up, .reveal-right {
     opacity: 1;
     transform: none;
     transition: none;
   }
+  .nav-flyout { transition: opacity 0.01s, visibility 0.01s; }
+  .nav-links .nav-flyout { transform: translate(0, 0); }
+  .nav-flyout-brand { transform: translate(0, -0.5rem); }
+  .team-lightbox { transform: none; }
+  .team-lightbox::after { display: none; }
 }
 
 /* Responsive */
@@ -1258,6 +1726,9 @@
   .service-media { width: 100%; height: 50vh; margin: 2rem 0 !important; }
   .service-officiating .service-text { padding-left: 0; }
   .rental-background { left: 0; right: 0; }
+
+  /* Stacked intro: no row to tuck under, so the second photo just follows. */
+  .about-intro-second { width: 100%; margin: 2rem 0 0; }
 
   .portfolio-grid { display: flex; flex-direction: column; gap: 4rem; }
   .portfolio-item { margin-top: 0 !important; width: 100%; }
@@ -1288,8 +1759,249 @@
   .footer-links a { margin: 0 1rem; }
 
   .testimonials, .faq-section { padding: 4rem 1.5rem; }
+  .scroll-cue { padding: 2.5rem 1.5rem 3.5rem; }
+  .faq-band + .faq-band { margin-top: 2.5rem; }
+  .faq-cta { margin-top: 3rem; padding: 2.5rem 1.5rem; }
   .testimonials-head, .faq-head { margin-bottom: 3rem; }
   .tm-columns { max-height: 520px; }
   .team-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .team-lightbox { padding: 0.9rem 0.9rem 1rem; }
+  .about-intro-second { width: 100%; margin: 2rem 0 0; }
   .faq-item { padding: 1.5rem; gap: 1rem; flex-direction: column; }
+}
+
+/* ==========================================================================
+   Contact form
+   Fields borrow the estimator's input language (paper-white ground, hairline
+   green border that firms up on focus) so the two forms on the site read as
+   one family.
+   ========================================================================== */
+.cf-wrap {
+  max-width: 720px;
+}
+
+.cf-form[hidden] { display: none; }
+
+.cf-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.cf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.cf-row .cf-field { margin-bottom: 0; }
+.cf-row + .cf-row,
+.cf-row + .cf-field { margin-top: 1.5rem; }
+
+.cf-optional,
+.cf-req {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+
+.cf-optional { color: var(--color-warm-taupe); }
+.cf-req { color: var(--color-ochre-rust); margin-left: 0.25rem; }
+
+.cf-form input,
+.cf-form select,
+.cf-form textarea {
+  width: 100%;
+  background-color: var(--color-paper-white);
+  border: 1px solid color-mix(in srgb, var(--color-bottle-green) 20%, transparent);
+  border-radius: 0;
+  color: var(--color-warm-ink);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  padding: 0.9rem 1.15rem;
+  transition: border-color var(--transition-fast);
+  appearance: none;
+}
+
+.cf-form textarea { resize: vertical; min-height: 8rem; }
+
+.cf-form input::placeholder,
+.cf-form textarea::placeholder { color: color-mix(in srgb, var(--color-warm-taupe) 70%, transparent); }
+
+.cf-form input:hover,
+.cf-form select:hover,
+.cf-form textarea:hover { border-color: color-mix(in srgb, var(--color-bottle-green) 45%, transparent); }
+
+.cf-form input:focus-visible,
+.cf-form select:focus-visible,
+.cf-form textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-bottle-green);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-bottle-green) 12%, transparent);
+}
+
+.cf-form .is-invalid { border-color: var(--color-ochre-rust); }
+
+.cf-error {
+  color: var(--color-ochre-rust);
+  font-size: 0.9rem;
+}
+
+.cf-select-wrap { position: relative; }
+
+.cf-select-wrap select { cursor: pointer; padding-right: 3rem; }
+
+.cf-caret {
+  position: absolute;
+  right: 1.15rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-warm-taupe);
+  font-family: var(--font-mono);
+}
+
+/* Off-screen rather than display:none — bots skip fields that aren't rendered. */
+.cf-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.cf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem 2rem;
+  margin-top: 2rem;
+}
+
+.cf-form button[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.cf-form button[disabled]:hover {
+  background-color: var(--color-ochre-rust);
+  transform: none;
+}
+
+.cf-note {
+  color: var(--color-warm-taupe);
+  font-size: 0.95rem;
+  max-width: 38ch;
+}
+
+.cf-note.is-error { color: var(--color-ochre-rust); }
+.cf-note a { color: var(--color-warm-ink); }
+
+.cf-success {
+  max-width: 620px;
+  border-left: 2px solid var(--color-ochre-rust);
+  padding: 0.5rem 0 0.5rem 1.75rem;
+}
+
+.cf-success[hidden] { display: none; }
+
+.cf-success h3 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  margin: 0.75rem 0 0.75rem;
+}
+
+.cf-success p { color: var(--color-warm-taupe); }
+.cf-success a { color: var(--color-warm-ink); }
+
+/* ==========================================================================
+   Rentals strip — machine photos under the concession banner on the homepage.
+   Renders only when public/photos/rentals/ has photos in it.
+   ========================================================================== */
+.rental-strip {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  margin: -3rem 0 6rem;
+  padding: 0;
+}
+
+.rental-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.rental-card img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+  background-color: var(--color-bottle-green);
+  clip-path: polygon(0 2%, 98% 0, 100% 98%, 2% 100%);
+  transition: clip-path var(--transition-slow);
+}
+
+.rental-card:hover img { clip-path: polygon(0 0, 100% 2%, 98% 100%, 2% 98%); }
+
+.rental-name { color: var(--color-warm-taupe); }
+
+/* ==========================================================================
+   Back to top
+   ========================================================================== */
+.to-top {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--color-bottle-green);
+  color: var(--color-paper-white);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  line-height: 1;
+  clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%);
+  animation: to-top-in 0.4s var(--ease-organic) both;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.to-top[hidden] { display: none; }
+
+.to-top:hover {
+  background-color: var(--color-ochre-rust);
+  transform: translateY(-4px);
+}
+
+.to-top:focus-visible {
+  outline: 2px solid var(--color-ochre-rust);
+  outline-offset: 3px;
+}
+
+.to-top-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+}
+
+@keyframes to-top-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .to-top { right: 1rem; bottom: 1rem; }
+  .rental-strip { gap: 1.5rem; margin-bottom: 4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .to-top { animation: none; }
+  .to-top:hover { transform: none; }
+  .rental-card:hover img { clip-path: polygon(0 2%, 98% 0, 100% 98%, 2% 100%); }
 }
